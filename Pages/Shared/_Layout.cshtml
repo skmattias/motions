@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+
+    <link rel="icon" type="image/x-icon" href="images/c.png" />
+
+    <link rel="stylesheet" href="~/node_modules/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="~/css/styles.css"/>
+
+</head>
+<body>
+<div class="main-container">
+    <nav class="navbar navbar-expand-md navbar-dark" id="navbar">
+        <a class="navbar-brand p-3" asp-page="Index">
+            <img src="images/logo.png" style="height: 100px; width: auto;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto nav">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="pill" href="#linkKommitteer">
+                        Kommittéer
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#link0">
+                        Länk Noll
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#link1">
+                        Länk Ett
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        <br/>
+        @RenderBody()
+        <br/>
+    </div>
+    <footer class="mt-auto py-3 text-center bg-light">
+        <img src="images/sanning.png" style="height: 200px;" alt=""/>
+    </footer>
+</div>
+
+<script src="~/node_modules/jquery/dist/jquery.js"></script>
+<script src="~/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<script src="~/js/script.js" asp-append-version="true"></script>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>
