@@ -1,41 +1,41 @@
-﻿<!DOCTYPE html>
+﻿@using CsAspnet.Models.dbcontext
+@inject motionsContext Context
+<!DOCTYPE html>
 <html lang="">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"]</title>
 
-    <link rel="icon" type="image/x-icon" href="images/c.png" />
+    <link rel="icon" type="image/x-icon" href="~/images/c.png" />
 
     <link rel="stylesheet" href="~/node_modules/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="~/css/styles.css"/>
 
 </head>
-<body>
+<body data-spy="scroll" data-target="#motions" style="position: relative">
 <div class="main-container">
     <nav class="navbar navbar-expand-md navbar-dark" id="navbar">
-        <a class="navbar-brand p-3" asp-page="Index">
-            <img src="images/logo.png" style="height: 100px; width: auto;">
+        <a class="navbar-brand p-3" asp-page="/Index">
+            <img src="~/images/logo.png" style="height: 100px; width: auto;">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto nav">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="pill" href="#linkKommitteer">
+            <ul class="navbar-nav nav">
+                <li class="nav-item dropdown">
+                    <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
                         Kommittéer
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="pill" href="#link0">
-                        Länk Noll
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="pill" href="#link1">
-                        Länk Ett
-                    </a>
+                    <div class="dropdown-menu" style="z-index: 2000">
+                        @foreach (var c in Context.Committee.ToList())
+                        {
+                            <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber">
+                                @c.CommitteeNumber: @c.CommitteeName
+                            </a>
+                        }
+                    </div>
                 </li>
             </ul>
         </div>
@@ -47,7 +47,7 @@
         <br/>
     </div>
     <footer class="mt-auto py-3 text-center bg-light">
-        <img src="images/sanning.png" style="height: 200px;" alt=""/>
+        <img src="~/images/sanning.png" style="height: 200px;" alt=""/>
     </footer>
 </div>
 

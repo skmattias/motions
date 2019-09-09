@@ -12,6 +12,7 @@ namespace CsAspnet.Models.dbcontext
 
         public int Id { get; set; }
         public int MotionNumber { get; set; }
+        public string MotionName { get; set; }
         public string MotionText { get; set; }
         public int CommitteeId { get; set; }
 

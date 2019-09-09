@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using CsAspnet.Models.dbcontext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsAspnet.Pages
 {
     public class IndexModel : PageModel
     {
         private readonly motionsContext _context;
-
+        
         public IndexModel(motionsContext context)
         {
             _context = context;

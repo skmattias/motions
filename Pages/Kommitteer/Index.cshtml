@@ -1,0 +1,29 @@
+@page "{id:int}"
+@model IndexModel
+@{
+    ViewData["Title"] = Model.Committee.CommitteeNumber + ": " + Model.Committee.CommitteeName;
+}
+
+<div id="committee"></div>
+
+<script type="text/javascript">
+
+    window.onload = function() {
+        $.ajax({
+            type: "GET",
+            url: "/Kommitteer/@Model.Committee.CommitteeNumber?handler=Committee",
+            data: {
+                "committeeId": @Model.Committee.CommitteeNumber
+            },
+            contentType: 'application/json; charset=utf-8"',
+            success: function (result) {
+                if (result) {
+                    $("#committee").html(result);
+                } else {
+                    location.href = "/Kommitteer/1"
+                }
+            }
+        });
+    };
+
+</script>

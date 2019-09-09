@@ -94,6 +94,11 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("committee_id")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.MotionName)
+                    .IsRequired()
+                    .HasColumnName("motion_name")
+                    .IsUnicode(false);
+
                 entity.Property(e => e.MotionNumber)
                     .HasColumnName("motion_number")
                     .HasColumnType("int(11)");

@@ -1,0 +1,35 @@
+@model CsAspnet.Models.dbcontext.Committee
+
+@if (Model.Motion.Any())
+{
+    <div class="row">
+        <div class="col-4">
+            <nav class="navbar navbar-light bg-light sticky-top" id="motions">
+                <nav class="nav nav-pills flex-column w-100">
+                    @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+                    {
+                        <a href="#m-@motion.Id" class="nav-link">
+                            @motion.FullNumber(): @motion.MotionName
+                        </a>
+                    }
+                </nav>
+            </nav>
+        </div>
+        <div class="col-8">
+            <div data-offset="0">
+                @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+                {
+                    <h3 id="m-@motion.Id">Motion @motion.FullNumber(): @motion.MotionName</h3>
+                    <p>@motion.MotionText</p>
+                    <dl class="row">
+                        @foreach (var att in motion.AttProposition.OrderBy(a => a.AttPropositionNumber))
+                        {
+                            <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3"><text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att</dt>
+                            <dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@att.AttPropositionText.ToLower()</dd>
+                        }
+                    </dl>
+                }
+            </div>
+        </div>
+    </div>
+}

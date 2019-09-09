@@ -26,7 +26,7 @@ namespace CsAspnet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<motionsContext>();
+            services.AddDbContext<motionsContext>(options => options.UseMySQL("server=localhost;user=root;database=motions"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models" />
+    <_ContentIncludedByDefault Remove="Pages\Committees\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Committees\_Committee.cshtml" />
   </ItemGroup>
 
 </Project>
