@@ -4,4 +4,18 @@
     ViewData["Title"] = "Centerstudenter";
 }
 
-Hem
+<div class="row">
+    @foreach (var c in Model.Committees.OrderBy(c => c.CommitteeNumber))
+    {
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card link-card" onclick="location.href='/Kommitteer/@c.CommitteeNumber'">
+                <div class="card-body">
+                    <h5 class="card-title">@c.FullName()</h5>
+                    <p class="card-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at tellus lobortis orci aliquet rutrum. Nulla eleifend scelerisque risus et.
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

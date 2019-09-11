@@ -13,14 +13,17 @@ namespace CsAspnet.Pages
     {
         private readonly motionsContext _context;
         
+        public List<Committee> Committees { get; set; }
+        
         public IndexModel(motionsContext context)
         {
             _context = context;
         }
         
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            
+            Committees = await _context.Committee.ToListAsync();
+            return Page();
         }
     }
 }

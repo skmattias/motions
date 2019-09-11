@@ -9,7 +9,7 @@
                     @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
                     {
                         <a href="#m-@motion.Id" class="nav-link">
-                            @motion.FullNumber(): @motion.MotionName
+                            @motion.FullName()
                         </a>
                     }
                 </nav>
