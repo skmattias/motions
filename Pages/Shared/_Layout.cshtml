@@ -15,23 +15,28 @@
 </head>
 <body data-spy="scroll" data-target="#motions" style="position: relative">
 <div class="main-container">
-    <nav class="navbar navbar-expand-md navbar-dark" id="navbar">
-        <a class="navbar-brand p-3" asp-page="/Index">
+    <nav class="navbar navbar-expand-sm navbar-dark" id="navbar">
+        <a class="navbar-brand p-3 d-none d-sm-block" asp-page="/Index">
             <img src="~/images/logo.png" style="height: 100px; width: auto;">
         </a>
+        <a class="navbar-brand p-3 d-sm-none" asp-page="/Index">
+            <img src="~/images/small-logo.png" style="height: 100px; width: auto;">
+        </a>
+        
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav nav">
                 <li class="nav-item dropdown">
                     <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        Kommittéer
+                        Alla Kommittéer
                     </a>
-                    <div class="dropdown-menu" style="z-index: 2000">
+                    <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
                         @foreach (var c in Context.Committee.ToList())
                         {
-                            <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber">
+                            <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber" 
+                                 style="white-space: normal">
                                 @c.CommitteeNumber: @c.CommitteeName
                             </a>
                         }
