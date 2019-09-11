@@ -1,0 +1,35 @@
+:root {
+    --primary-green: #006930;
+}
+
+#navbar {
+    background-color: var(--primary-green);
+}
+
+html, body {
+    height: 100%;
+    position: relative;
+}
+
+.main-container {
+    min-height: 100vh;
+    display: block;
+    position: relative;
+    padding-bottom: 232px; /* Exact height of the footer */
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.nav-pills .nav-link.active {
+    background-color: transparent;
+    color: grey;
+}
+
+.link-card {
+    margin-bottom: 20px;
+    cursor: pointer;
+}
