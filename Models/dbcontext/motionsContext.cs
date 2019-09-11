@@ -20,6 +20,15 @@ namespace CsAspnet.Models.dbcontext
         public virtual DbSet<Motion> Motion { get; set; }
         public virtual DbSet<SuggestedVote> SuggestedVote { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySQL("server=localhost;user=root;database=motions");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AttProposition>(entity =>
@@ -68,6 +77,10 @@ namespace CsAspnet.Models.dbcontext
                 entity.Property(e => e.CommitteeNumber)
                     .HasColumnName("committee_number")
                     .HasColumnType("int(11)");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Motion>(entity =>
