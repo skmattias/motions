@@ -1,5 +1,12 @@
 @model CsAspnet.Models.dbcontext.Committee
 
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-center">Kommitté @Model.FullName()</h3>
+    </div>
+</div>
+<hr/>
+
 @if (Model.Motion.Any())
 {
     @* Desktop nav bar *@
@@ -92,16 +99,18 @@ window.onscroll = function() {
     stickNavbar();
 };
 
-var navbar = $("#smallNavbar")
+var navbar = $("#smallNavbar");
 var content = $("#motionsContent");
 var sticky = content.offset().top;
 function stickNavbar() {
-    if (window.pageYOffset >= sticky) {
-        navbar.addClass("sticky");
-        $("#motionsContent").css('margin-top', 38 + 16);
-    } else {
-        navbar.removeClass("sticky");
-        $("#motionsContent").css('margin-top', 0);
+    if (navbar.is(':visible')) {
+        if (window.pageYOffset >= sticky) {
+            navbar.addClass("sticky");
+            content.css('margin-top', 38 + 16);
+        } else {
+            navbar.removeClass("sticky");
+            content.css('margin-top', 0);
+        }
     }
 }
 
