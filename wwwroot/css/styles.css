@@ -33,3 +33,13 @@ footer {
     margin-bottom: 20px;
     cursor: pointer;
 }
+
+.sticky {
+    position: fixed;
+    bottom: 0;
+}
+
+.modal-list-group {
+    margin: -1rem;
+    border: 0;
+}

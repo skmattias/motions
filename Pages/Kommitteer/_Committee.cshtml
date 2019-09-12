@@ -2,34 +2,107 @@
 
 @if (Model.Motion.Any())
 {
+    @* Desktop nav bar *@
     <div class="row">
-        <div class="col-4">
-            <nav class="navbar navbar-light bg-light sticky-top" id="motions">
+        <div class="col-sm-4 d-none d-sm-block">
+            <nav class="navbar navbar-light bg-light sticky-top" id="motions" 
+                 style="max-height: calc(100vh - 2em); overflow: auto; top: 1em;">
                 <nav class="nav nav-pills flex-column w-100">
                     @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
                     {
-                        <a href="#m-@motion.Id" class="nav-link">
+                        <a href="#m-@motion.Id" class="nav-link text-break">
                             @motion.FullName()
                         </a>
                     }
                 </nav>
             </nav>
         </div>
-        <div class="col-8">
+        
+        @* Mobile nav bar *@
+        <div class="col-12 d-sm-none">
+            <button class="btn btn-secondary" id="smallNavbar" data-toggle="modal" data-target="#allMotionsModal"
+                    style="z-index: 1020; width: calc(100vw - 2em); margin-bottom: 16px;" >
+                Alla motioner
+            </button>
+        </div>
+        
+        @* Content *@
+        <div class="col-sm-8 col-xs-12" id="motionsContent">
             <div data-offset="0">
-                @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
-                {
-                    <h3 id="m-@motion.Id">Motion @motion.FullNumber(): @motion.MotionName</h3>
-                    <p>@motion.MotionText</p>
-                    <dl class="row">
-                        @foreach (var att in motion.AttProposition.OrderBy(a => a.AttPropositionNumber))
+                @{
+                    bool first = true;
+                    foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+                    {
+                        if (first)
                         {
-                            <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3"><text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att</dt>
-                            <dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@att.AttPropositionText.ToLower()</dd>
+                            first = false;
                         }
-                    </dl>
+                        else
+                        {
+                            <hr/>
+                        }
+                        <h4 id="m-@motion.Id" class="text-break">Motion @motion.FullNumber(): @motion.MotionName</h4>
+                        <p>@motion.MotionText</p>
+                        <dl class="row">
+                            @foreach (var att in motion.AttProposition.OrderBy(a => a.AttPropositionNumber))
+                            {
+                                <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3"><text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att</dt>
+                                <dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@att.AttPropositionText.ToLower()</dd>
+                            }
+                        </dl>
+                    }
                 }
             </div>
         </div>
     </div>
+    
+    @* All motions modal *@
+    <div class="modal fade" id="allMotionsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body list-group">
+                    <ul class="list-group modal-list-group">
+                        @foreach (var motion in Model.Motion)
+                        {
+                            <a href="#m-@motion.Id" class="list-group-item text-break" 
+                               onclick="$('#allMotionsModal').modal('hide');">
+                                @motion.FullName()
+                            </a>
+                        }
+                        <li class="list-group-item">Cras justo odio</li>
+                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                        <li class="list-group-item">Morbi leo risus</li>
+                        <li class="list-group-item">Porta ac consectetur ac</li>
+                        <li class="list-group-item">Vestibulum at eros</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 }
+
+<script type="text/javascript">
+
+window.onscroll = function() {
+    stickNavbar();
+};
+
+var navbar = $("#smallNavbar")
+var content = $("#motionsContent");
+var sticky = content.offset().top;
+function stickNavbar() {
+    if (window.pageYOffset >= sticky) {
+        navbar.addClass("sticky");
+        $("#motionsContent").css('margin-top', 38 + 16);
+    } else {
+        navbar.removeClass("sticky");
+        $("#motionsContent").css('margin-top', 0);
+    }
+}
+
+</script>
