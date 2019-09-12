@@ -41,7 +41,7 @@
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
-            url: "/Kommitteer/" + attId + "?handler=SaveAtt",
+            url: "/Kommitteer/" + @Model.Motion.Committee.Id + "?handler=SaveAtt",
             data: JSON.stringify({
                 "AttId": attId,
                 "Number": $("#editAttNumber").val(),

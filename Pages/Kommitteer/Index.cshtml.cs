@@ -123,9 +123,13 @@ namespace CsAspnet.Pages.Kommitteer
                 motion.MotionName = data.Name;
                 motion.MotionText = data.Text;
 
-                // Save changes and return true.
+                // Save changes and return the new name.
                 await _context.SaveChangesAsync();
-                return new JsonResult(new {Result = true});
+                return new JsonResult(new
+                {
+                    Result = true,
+                    Name = motion.FullName()
+                });
             }
             catch (Exception e)
             {

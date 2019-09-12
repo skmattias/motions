@@ -53,7 +53,7 @@
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
-            url: "/Kommitteer/" + motionId + "?handler=SaveMotion",
+            url: "/Kommitteer/" + @Model.Committee.Id + "?handler=SaveMotion",
             data: JSON.stringify({
                 "MotionId": motionId,
                 "Number": $("#editMotionNumber").val(),
@@ -63,6 +63,11 @@
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
+                    // Update the links to the motion.
+                    $("#motionTitleMobile-" + motionId).text(result.name);
+                    $("#motionTitleDesktop-" + motionId).text(result.name);
+                    
+                    // Update the actual motion.
                     loadMotion(motionId);
                 } else {
                     alert(result.message);

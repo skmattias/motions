@@ -52,7 +52,7 @@
             // Get the edit motion-html.
             $.ajax({
                 type: "GET",
-                url: "/Kommitteer/" + attId + "?handler=EditAtt",
+                url: "/Kommitteer/" + @Model.Committee.Id + "?handler=EditAtt",
                 data: {
                     "AttId": attId
                 },
