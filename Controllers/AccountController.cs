@@ -9,7 +9,7 @@ namespace CsAspnet.Controllers
 {
     public class AccountController : Controller
     {
-        public async Task Login(string returnUrl = "/Admin")
+        public async Task Login(string returnUrl = "/")
         {
             await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties {RedirectUri = returnUrl});
         }

@@ -12,7 +12,7 @@
 
 <script type="text/javascript">
 
-    window.onload = function() {
+    function loadMotions() {
         $.ajax({
             type: "GET",
             url: "/Kommitteer/@Model.Committee.CommitteeNumber?handler=Committee",
@@ -28,6 +28,10 @@
                 }
             }
         });
+    }
+    
+    window.onload = function() {
+        loadMotions();
     };
 
 </script>

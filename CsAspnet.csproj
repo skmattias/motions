@@ -15,6 +15,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Committees\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Pages\Committees\_Committee.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Admin\Kommitteer\Index.cshtml" />
   </ItemGroup>
 
 </Project>

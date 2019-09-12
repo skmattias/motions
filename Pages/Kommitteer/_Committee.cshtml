@@ -48,12 +48,23 @@
                         {
                             <hr/>
                         }
-                        <h4 id="m-@motion.Id" class="text-break">Motion @motion.FullNumber(): @motion.MotionName</h4>
+                        <h4 id="m-@motion.Id" class="text-break">
+                            @* Admin edit button for the motion *@
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <button class="btn btn-link" onclick="editMotion('@motion.Id')">
+                                    <i class="mdi mdi-edit"></i>
+                                </button>
+                            }
+                            Motion @motion.FullNumber(): @motion.MotionName
+                        </h4>
                         <p>@motion.MotionText</p>
                         <dl class="row">
                             @foreach (var att in motion.AttProposition.OrderBy(a => a.AttPropositionNumber))
                             {
-                                <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3"><text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att</dt>
+                                <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3">
+                                    <text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att
+                                </dt>
                                 <dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@att.AttPropositionText.ToLower()</dd>
                             }
                         </dl>
@@ -62,35 +73,8 @@
             </div>
         </div>
     </div>
-    
-    @* All motions modal *@
-    <div class="modal fade" id="allMotionsModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body list-group">
-                    <ul class="list-group modal-list-group">
-                        @foreach (var motion in Model.Motion)
-                        {
-                            <a href="#m-@motion.Id" class="list-group-item text-break" 
-                               onclick="$('#allMotionsModal').modal('hide');">
-                                @motion.FullName()
-                            </a>
-                        }
-                        <li class="list-group-item">Cras justo odio</li>
-                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                        <li class="list-group-item">Morbi leo risus</li>
-                        <li class="list-group-item">Porta ac consectetur ac</li>
-                        <li class="list-group-item">Vestibulum at eros</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    await Html.RenderPartialAsync("_CommitteeModals", Model);
 }
 
 <script type="text/javascript">
@@ -115,3 +99,14 @@ function stickNavbar() {
 }
 
 </script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+    
+        function editMotion(motionId) {
+            
+        }
+    
+    </script>
+}

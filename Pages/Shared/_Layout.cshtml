@@ -1,5 +1,5 @@
 ﻿@using CsAspnet.Models.dbcontext
-@inject motionsContext Context
+@inject motionsContext DatabaseContext
 <!DOCTYPE html>
 <html lang="">
 <head>
@@ -10,6 +10,7 @@
     <link rel="icon" type="image/x-icon" href="~/images/c.png"/>
 
     <link rel="stylesheet" href="~/node_modules/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="~/node_modules/bootstrap-material-design-icons/css/material-icons.css"/>
     <link rel="stylesheet" href="~/css/styles.css"/>
 
 </head>
@@ -33,7 +34,7 @@
                         Alla kommittéer
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
-                        @foreach (var c in Context.Committee.ToList())
+                        @foreach (var c in DatabaseContext.Committee.ToList())
                         {
                             <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber"
                                style="white-space: normal">
