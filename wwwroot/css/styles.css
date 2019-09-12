@@ -43,3 +43,11 @@ footer {
     margin: -1rem;
     border: 0;
 }
+
+.half-form-input {
+    padding-right: 0;
+}
+
+.inline-btn-link {
+    padding: 0;
+}

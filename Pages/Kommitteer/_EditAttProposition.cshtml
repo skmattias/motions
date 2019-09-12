@@ -1,0 +1,65 @@
+@model CsAspnet.Models.dbcontext.AttProposition
+
+<div class="row">
+    <div class="form-group half-form-input col-2">
+        <input class="form-control" type="number" value="@Model.AttPropositionNumber" id="editAttNumber"/>
+    </div>
+    <div class="form-group col-10">
+        <input class="form-control" type="text" value="@Model.AttPropositionText.ToLower()" id="editAttText"/>
+    </div>
+    
+    <div class="col-12">
+        <div class="btn-toolbar pull-right">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(@Model.Motion.Id, this)">
+                Avbryt
+            </button>
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success" onclick="saveAtt(@Model.Id, this)">
+                Spara
+            </button>
+        </div>
+    </div>
+</div>
+<br/>
+
+
+<script type="text/javascript">
+
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    
+    function saveAtt(attId, button) {
+        
+        // Spin the button immediately.
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        
+        // Save the motion.
+        $.ajax({
+            traditional: true,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            url: "/Kommitteer/" + attId + "?handler=SaveAtt",
+            data: JSON.stringify({
+                "AttId": attId,
+                "Number": $("#editAttNumber").val(),
+                "Text": $("#editAttText").val()
+            }),
+            contentType: 'application/json; charset=utf-8"',
+            success: function(result) {
+                if (result.result) {
+                    loadMotion(@Model.Motion.Id);
+                } else {
+                    alert(result.message);
+                    $(button).html(oldButtonHtml);
+                }
+            }, error: function() {
+                alert("Okänt fel, prova att ladda om sidan");
+                $(button).html(oldButtonHtml);
+            }
+        });
+    }
+
+</script>

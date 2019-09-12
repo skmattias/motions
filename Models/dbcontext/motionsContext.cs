@@ -47,6 +47,7 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AttPropositionText)
+                    .IsRequired()
                     .HasColumnName("att_proposition_text")
                     .IsUnicode(false);
 

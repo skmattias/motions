@@ -1,0 +1,17 @@
+@model CsAspnet.Models.dbcontext.AttProposition
+
+<dl class="row" style="margin-bottom: 0;">
+<dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3 half-form-input">
+    @if (User.Identity.IsAuthenticated)
+    {
+        @*TODO radera att-satser*@
+        <button class="btn btn-link inline-btn-link" onclick="editAtt(@Model.Id, this)">
+            <i class="mdi mdi-edit"></i>
+        </button>
+    }
+    <text style="display: inline-block; width: 50px;">@Model.FullNumber():</text> Att
+</dt>
+<dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@Model.AttPropositionText.ToLower()</dd>
+</dl>
+
+@*TODO suggested votes*@

@@ -1,5 +1,5 @@
 @model CsAspnet.Models.dbcontext.Committee
-
+@* TODO bind the enter key to the appropriate ok button on all pages and views *@
 <div class="row">
     <div class="col-12">
         <h3 class="text-center">Kommitté @Model.FullName()</h3>
@@ -34,43 +34,27 @@
         </div>
         
         @* Content *@
-        <div class="col-sm-8 col-xs-12" id="motionsContent">
-            <div data-offset="0">
-                @{
-                    bool first = true;
-                    foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+        <div class="col-sm-8 col-xs-12" id="motionsContent" data-offset="0">
+            @{
+                bool first = true;
+                foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+                {
+                    if (first)
                     {
-                        if (first)
-                        {
-                            first = false;
-                        }
-                        else
-                        {
-                            <hr/>
-                        }
-                        <h4 id="m-@motion.Id" class="text-break">
-                            @* Admin edit button for the motion *@
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <button class="btn btn-link" onclick="editMotion('@motion.Id')">
-                                    <i class="mdi mdi-edit"></i>
-                                </button>
-                            }
-                            Motion @motion.FullNumber(): @motion.MotionName
-                        </h4>
-                        <p>@motion.MotionText</p>
-                        <dl class="row">
-                            @foreach (var att in motion.AttProposition.OrderBy(a => a.AttPropositionNumber))
-                            {
-                                <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3">
-                                    <text style="display: inline-block; width: 50px;">@att.FullNumber():</text> Att
-                                </dt>
-                                <dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@att.AttPropositionText.ToLower()</dd>
-                            }
-                        </dl>
+                        first = false;
                     }
+                    else
+                    {
+                        <hr/>
+                    }
+                    <div id="m-@motion.Id">
+                        @{
+                            // Initially just render all motions.
+                            await Html.RenderPartialAsync("_Motion", motion);
+                        }
+                    </div>
                 }
-            </div>
+            }
         </div>
     </div>
 
@@ -79,33 +63,95 @@
 
 <script type="text/javascript">
 
-window.onscroll = function() {
-    stickNavbar();
-};
+    //
+    // Vars:
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    var editingMotion = false;
 
-var navbar = $("#smallNavbar");
-var content = $("#motionsContent");
-var sticky = content.offset().top;
-function stickNavbar() {
-    if (navbar.is(':visible')) {
-        if (window.pageYOffset >= sticky) {
-            navbar.addClass("sticky");
-            content.css('margin-top', 38 + 16);
-        } else {
-            navbar.removeClass("sticky");
-            content.css('margin-top', 0);
+    //
+    // Functions:
+
+    function loadMotion(motionId, button) {
+        @* TODO update the title in both of the motion lists aswell! *@
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        $.ajax({
+            type: "GET",
+            url: "/Kommitteer/" + motionId + "?handler=LoadMotion",
+            data: {
+                "motionId": motionId
+            },
+            contentType: 'application/json; charset=utf-8"',
+            success: function (result) {
+                if (result) {
+                    $("#m-" + motionId).html(result);
+                } else {
+                    $(button).html(oldButtonHtml);
+                }
+                editingMotion = false;
+            }, error: function() {
+                $(button).html(oldButtonHtml);
+                editingMotion = false;
+            }
+        });
+    }
+
+    //
+    // Stuff for the navbar button on mobile:
+    window.onscroll = function() {
+        stickNavbar();
+    };
+    var navbar = $("#smallNavbar");
+    var content = $("#motionsContent");
+    var sticky = content.offset().top;
+    function stickNavbar() {
+        if (navbar.is(':visible')) {
+            if (window.pageYOffset >= sticky) {
+                navbar.addClass("sticky");
+                content.css('margin-top', 38 + 16);
+            } else {
+                navbar.removeClass("sticky");
+                content.css('margin-top', 0);
+            }
         }
     }
-}
 
 </script>
 
 @if (User.Identity.IsAuthenticated)
 {
     <script type="text/javascript">
-    
-        function editMotion(motionId) {
+        
+        function editMotion(motionId, button) {
+            if (editingMotion) {
+                alert("Du kan bara redigera en motion åt gången");
+                return;
+            }
             
+            editingMotion = true;
+            
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the edit motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Kommitteer/" + motionId + "?handler=EditMotion",
+                data: {
+                    "motionId": motionId
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    if (result) {
+                        $("#m-" + motionId).html(result);
+                    } else {
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
         }
     
     </script>

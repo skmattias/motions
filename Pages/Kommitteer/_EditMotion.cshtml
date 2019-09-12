@@ -1,0 +1,93 @@
+@model CsAspnet.Models.dbcontext.Motion
+
+<div class="row">
+    <div class="form-group half-form-input col-2">
+        <input class="form-control" type="number" value="@Model.MotionNumber" id="editMotionNumber"/>
+    </div>
+    <div class="form-group col-10">
+        <input class="form-control" type="text" value="@Model.MotionName" id="editMotionName"/>
+    </div>
+
+    <div class="form-group col-12">
+        <textarea class="form-control" onkeyup="autoResize(this)" id="editMotionText" 
+                  style="overflow: hidden">@Model.MotionText</textarea>
+    </div>
+    
+    <div class="col-12">
+        @foreach (var att in Model.AttProposition.OrderBy(a => a.AttPropositionNumber))
+        {
+            await Html.RenderPartialAsync("_AttProposition", att);
+        }
+    </div>
+    
+    
+    <div class="col-12">
+        <div class="btn-toolbar pull-right">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(@Model.Id, this)">
+                Avbryt
+            </button>
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success" onclick="saveMotion(@Model.Id, this)">
+                Spara
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    
+    function saveMotion(motionId, button) {
+        
+        // Spin the button immediately.
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        
+        // Save the motion.
+        $.ajax({
+            traditional: true,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            url: "/Kommitteer/" + motionId + "?handler=SaveMotion",
+            data: JSON.stringify({
+                "MotionId": motionId,
+                "Number": $("#editMotionNumber").val(),
+                "Name": $("#editMotionName").val(),
+                "Text": $("#editMotionText").val()
+            }),
+            contentType: 'application/json; charset=utf-8"',
+            success: function(result) {
+                if (result.result) {
+                    loadMotion(motionId);
+                } else {
+                    alert(result.message);
+                    $(button).html(oldButtonHtml);
+                }
+            }, error: function() {
+                alert("Okänt fel, prova att ladda om sidan");
+                $(button).html(oldButtonHtml);
+            }
+        });
+    }
+
+    function autoResize(textarea) {
+        var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
+        textarea.style.height = "1px";
+        var ne = textarea.scrollHeight;
+        if (ne < old) {
+            textarea.style.height = (old) + "px";
+        } else {
+            textarea.style.height = (ne) + "px";
+        }
+    }
+    
+    $(document).ready(function() {
+        autoResize(document.getElementById("editMotionText"));
+    });
+    
+</script>
