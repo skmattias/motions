@@ -2,19 +2,19 @@
 
 <div class="row">
     <div class="form-group half-form-input col-2">
-        <input class="form-control" type="number" value="@Model.MotionNumber" id="editMotionNumber"/>
+        <input class="form-control" type="number" value="@Model.MotionNumber" placeholder="Nummer" id="editMotionNumber"/>
     </div>
     <div class="form-group col-10">
-        <input class="form-control" type="text" value="@Model.MotionName" id="editMotionName"/>
+        <input class="form-control" type="text" value="@Model.MotionName" placeholder="Titel" id="editMotionName"/>
     </div>
 
     <div class="form-group col-12">
-        <textarea class="form-control" onkeyup="autoResize(this)" id="editMotionText" 
+        <textarea class="form-control" onkeyup="autoResize(this)" placeholder="Text" id="editMotionText" 
                   style="overflow: hidden">@Model.MotionText</textarea>
     </div>
     
     <div class="col-12">
-        @foreach (var att in Model.AttProposition.OrderBy(a => a.AttPropositionNumber))
+        @foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
         {
             await Html.RenderPartialAsync("Kommitteer/_Att", att);
         }

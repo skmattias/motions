@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CsAspnet.Pages.Kommitteer
 {
-    // TODO! lägg alla farliga handlers i admin! Testa att man inte kan getta
-    // eller posta utan att vara inloggad!
     public class IndexModel : PageModel
     {
         private readonly motionsContext _context;
@@ -35,7 +33,7 @@ namespace CsAspnet.Pages.Kommitteer
         {
             var committee = await _context.Committee
                 .Include(c => c.Motion)
-                .ThenInclude(m => m.AttProposition)
+                .ThenInclude(m => m.Att)
                 .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(c => c.Id == committeeId);
 
@@ -49,7 +47,7 @@ namespace CsAspnet.Pages.Kommitteer
         {
             var motion = await _context.Motion
                 .Include(m => m.Committee)
-                .Include(m => m.AttProposition)
+                .Include(m => m.Att)
                 .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(m => m.Id == motionId);
 

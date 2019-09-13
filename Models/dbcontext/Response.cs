@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace CsAspnet.Models.dbcontext
 {
-    public partial class SuggestedVote
+    public partial class Response
     {
         public int Id { get; set; }
-        public int AttId { get; set; }
-        public string Vote { get; set; }
+        public string ResponseText { get; set; }
         public int ActorId { get; set; }
+        public int MotionId { get; set; }
 
         public Actor Actor { get; set; }
-        public Att Att { get; set; }
+        public Motion Motion { get; set; }
     }
 }

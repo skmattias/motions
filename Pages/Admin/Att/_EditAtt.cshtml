@@ -1,11 +1,11 @@
-@model CsAspnet.Models.dbcontext.AttProposition
+@model CsAspnet.Models.dbcontext.Att
 
 <div class="row">
     <div class="form-group half-form-input col-2">
-        <input class="form-control" type="number" value="@Model.AttPropositionNumber" id="editAttNumber"/>
+        <input class="form-control" type="number" value="@Model.AttNumber" placeholder="Nummer" id="editAttNumber"/>
     </div>
     <div class="form-group col-10">
-        <input class="form-control" type="text" value="@Model.AttPropositionText.ToLower()" id="editAttText"/>
+        <input class="form-control" type="text" value="@Model.AttText.ToLower()" placeholder="Att-sats" id="editAttText"/>
     </div>
     
     <div class="col-12">

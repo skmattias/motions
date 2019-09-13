@@ -1,17 +1,18 @@
 @* Model: committee number*@
 @model int
 
+<hr/>
 <div class="row">
     <div class="form-group half-form-input col-2">
-        <input class="form-control" type="number" id="newMotionNumber"/>
+        <input class="form-control" type="number" placeholder="Nummer" id="newMotionNumber"/>
     </div>
     <div class="form-group col-10">
-        <input class="form-control" type="text" id="newMotionName"/>
+        <input class="form-control" type="text" placeholder="Titel" id="newMotionName"/>
     </div>
 
     <div class="form-group col-12">
         <textarea class="form-control" onkeyup="autoResize(this)" id="newMotionText" 
-                  style="overflow: hidden"></textarea>
+                  placeholder="Text" style="overflow: hidden"></textarea>
     </div>
     
     <div class="col-12">

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace CsAspnet.Models.dbcontext
 {
-    public partial class AttProposition
+    public partial class Att
     {
-        public AttProposition()
+        public Att()
         {
             SuggestedVote = new HashSet<SuggestedVote>();
         }
 
         public int Id { get; set; }
-        public int AttPropositionNumber { get; set; }
-        public string AttPropositionText { get; set; }
+        public int AttNumber { get; set; }
+        public string AttText { get; set; }
         public int MotionId { get; set; }
 
         public Motion Motion { get; set; }

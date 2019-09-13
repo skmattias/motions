@@ -1,7 +1,5 @@
 @model CsAspnet.Models.dbcontext.Motion
 
-@*TODO både add- och edit motion, watermark i fälten*@
-
 <h4 class="text-break">
     @* Admin edit button for the motion *@
     @if (User.Identity.IsAuthenticated)
@@ -25,7 +23,7 @@
     <p>@p</p>
 }
 
-@foreach (var att in Model.AttProposition.OrderBy(a => a.AttPropositionNumber))
+@foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
 {
     <div id="a-@Model.Id-@att.Id">
         @{
@@ -37,6 +35,3 @@
 {
     await Html.RenderPartialAsync("Admin/Att/_AddAttButton", @Model.Id);
 }
-@*TODO lägg till fler att-satser*@
-@*TODO redigera att-satser*@
-@*TODO radera att-satser*@

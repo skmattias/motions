@@ -30,7 +30,7 @@ namespace CsAspnet.Pages.Admin
         {
             var motion = await _context.Motion
                 .Include(m => m.Committee)
-                .Include(m => m.AttProposition)
+                .Include(m => m.Att)
                 .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(m => m.Id == motionId);
 
@@ -110,7 +110,7 @@ namespace CsAspnet.Pages.Admin
                     // Get the motion.
                     motion = await _context.Motion
                         .Include(m => m.Committee)
-                        .Include(m => m.AttProposition)
+                        .Include(m => m.Att)
                         .ThenInclude(a => a.SuggestedVote)
                         .FirstOrDefaultAsync(m => m.Id == data.MotionId);
 
@@ -178,7 +178,7 @@ namespace CsAspnet.Pages.Admin
         // Att handler
         public async Task<IActionResult> OnGetEditAttAsync(int attId)
         {
-            var att = await _context.AttProposition
+            var att = await _context.Att
                 .Include(a => a.SuggestedVote)
                 .Include(a => a.Motion)
                 .ThenInclude(m => m.Committee)
@@ -195,9 +195,9 @@ namespace CsAspnet.Pages.Admin
             return ViewTools.GetPartialView("Att/_AddAtt", motionId);
         }
 
-        public IActionResult OnGetCancelAddAtt()
+        public IActionResult OnGetCancelAddAtt(int motionId)
         {
-            return ViewTools.GetPartialView("Att/_AddAttButton");
+            return ViewTools.GetPartialView("Att/_AddAttButton", motionId);
         }
         
         public class SaveAttPostData
@@ -236,7 +236,7 @@ namespace CsAspnet.Pages.Admin
                         Message = "Ange en text för att-satsen"
                     });
 
-                AttProposition att = null;
+                Att att = null;
                 
                 // Create a new att.
                 if (data.AttId == 0)
@@ -250,20 +250,20 @@ namespace CsAspnet.Pages.Admin
                             Message = "Motionen hittades inte i databasen. Prova att ladda on sidan."
                         });
                     
-                    att = new AttProposition
+                    att = new Att
                     {
-                        AttPropositionNumber = data.Number.Value,
-                        AttPropositionText = data.Text,
+                        AttNumber = data.Number.Value,
+                        AttText = data.Text,
                         Motion = motion
                     };
 
-                    await _context.AttProposition.AddAsync(att);
+                    await _context.Att.AddAsync(att);
                 }
                 // Edit an existing att.
                 else
                 {
                     // Get the att proposition.
-                    att = await _context.AttProposition
+                    att = await _context.Att
                         .Include(a => a.SuggestedVote)
                         .Include(a => a.Motion)
                         .ThenInclude(m => m.Committee)
@@ -278,8 +278,8 @@ namespace CsAspnet.Pages.Admin
                         });
 
                     // Edit the motion data.
-                    att.AttPropositionNumber = data.Number.Value;
-                    att.AttPropositionText = data.Text;
+                    att.AttNumber = data.Number.Value;
+                    att.AttText = data.Text;
                 }
 
                 // Save changes and return true.
@@ -300,7 +300,7 @@ namespace CsAspnet.Pages.Admin
         {
             try
             {
-                var att = await _context.AttProposition.FindAsync(attId);
+                var att = await _context.Att.FindAsync(attId);
 
                 // Check for datbase errors.
                 if (att == null)
@@ -310,7 +310,7 @@ namespace CsAspnet.Pages.Admin
                         Message = "Att-satsen hittades inte i databsen. Prova att ladda om sidan."
                     });
 
-                _context.AttProposition.Remove(att);
+                _context.Att.Remove(att);
                 await _context.SaveChangesAsync();
                 return new JsonResult(new {Result = true});
             }

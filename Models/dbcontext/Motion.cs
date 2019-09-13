@@ -7,7 +7,8 @@ namespace CsAspnet.Models.dbcontext
     {
         public Motion()
         {
-            AttProposition = new HashSet<AttProposition>();
+            Att = new HashSet<Att>();
+            Response = new HashSet<Response>();
         }
 
         public int Id { get; set; }
@@ -17,6 +18,7 @@ namespace CsAspnet.Models.dbcontext
         public int CommitteeId { get; set; }
 
         public Committee Committee { get; set; }
-        public ICollection<AttProposition> AttProposition { get; set; }
+        public ICollection<Att> Att { get; set; }
+        public ICollection<Response> Response { get; set; }
     }
 }

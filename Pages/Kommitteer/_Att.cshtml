@@ -1,4 +1,4 @@
-@model CsAspnet.Models.dbcontext.AttProposition
+@model CsAspnet.Models.dbcontext.Att
 
 <dl class="row" style="margin-bottom: 0;">
 <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3 half-form-input">
@@ -16,7 +16,7 @@
     }
     <text style="display: inline-block; width: 50px;">@Model.FullNumber():</text> Att
 </dt>
-<dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@Model.AttPropositionText.ToLower()</dd>
+<dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@Model.AttText.ToLower()</dd>
 </dl>
 
 @*TODO suggested votes*@

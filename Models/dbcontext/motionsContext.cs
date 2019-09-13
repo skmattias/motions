@@ -15,9 +15,11 @@ namespace CsAspnet.Models.dbcontext
         {
         }
 
-        public virtual DbSet<AttProposition> AttProposition { get; set; }
+        public virtual DbSet<Actor> Actor { get; set; }
+        public virtual DbSet<Att> Att { get; set; }
         public virtual DbSet<Committee> Committee { get; set; }
         public virtual DbSet<Motion> Motion { get; set; }
+        public virtual DbSet<Response> Response { get; set; }
         public virtual DbSet<SuggestedVote> SuggestedVote { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,9 +33,23 @@ namespace CsAspnet.Models.dbcontext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AttProposition>(entity =>
+            modelBuilder.Entity<Actor>(entity =>
             {
-                entity.ToTable("att_proposition", "motions");
+                entity.ToTable("actor", "motions");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ActorName)
+                    .IsRequired()
+                    .HasColumnName("actor_name")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Att>(entity =>
+            {
+                entity.ToTable("att", "motions");
 
                 entity.HasIndex(e => e.MotionId)
                     .HasName("att_proposition_motion_id_fk");
@@ -42,13 +58,13 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.AttPropositionNumber)
-                    .HasColumnName("att_proposition_number")
+                entity.Property(e => e.AttNumber)
+                    .HasColumnName("att_number")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.AttPropositionText)
+                entity.Property(e => e.AttText)
                     .IsRequired()
-                    .HasColumnName("att_proposition_text")
+                    .HasColumnName("att_text")
                     .IsUnicode(false);
 
                 entity.Property(e => e.MotionId)
@@ -56,7 +72,7 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Motion)
-                    .WithMany(p => p.AttProposition)
+                    .WithMany(p => p.Att)
                     .HasForeignKey(d => d.MotionId)
                     .HasConstraintName("att_proposition_motion_id_fk");
             });
@@ -118,35 +134,81 @@ namespace CsAspnet.Models.dbcontext
                     .HasConstraintName("motion_committee_id_fk");
             });
 
-            modelBuilder.Entity<SuggestedVote>(entity =>
+            modelBuilder.Entity<Response>(entity =>
             {
-                entity.ToTable("suggested_vote", "motions");
+                entity.ToTable("response", "motions");
 
-                entity.HasIndex(e => e.AttPropositionId)
-                    .HasName("suggested_vote_att_proposition_id_fk");
+                entity.HasIndex(e => e.ActorId)
+                    .HasName("response_actor_id_fk");
+
+                entity.HasIndex(e => e.MotionId)
+                    .HasName("response_motion_id_fk");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.Actor)
-                    .IsRequired()
-                    .HasColumnName("actor")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AttPropositionId)
-                    .HasColumnName("att_proposition_id")
+                entity.Property(e => e.ActorId)
+                    .HasColumnName("actor_id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.SuggestedVote1)
+                entity.Property(e => e.MotionId)
+                    .HasColumnName("motion_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ResponseText)
                     .IsRequired()
-                    .HasColumnName("suggested_vote")
+                    .HasColumnName("response_text")
                     .IsUnicode(false);
 
-                entity.HasOne(d => d.AttProposition)
+                entity.HasOne(d => d.Actor)
+                    .WithMany(p => p.Response)
+                    .HasForeignKey(d => d.ActorId)
+                    .HasConstraintName("response_actor_id_fk");
+
+                entity.HasOne(d => d.Motion)
+                    .WithMany(p => p.Response)
+                    .HasForeignKey(d => d.MotionId)
+                    .HasConstraintName("response_motion_id_fk");
+            });
+
+            modelBuilder.Entity<SuggestedVote>(entity =>
+            {
+                entity.ToTable("suggested_vote", "motions");
+
+                entity.HasIndex(e => e.ActorId)
+                    .HasName("suggested_vote_actor_id_fk");
+
+                entity.HasIndex(e => e.AttId)
+                    .HasName("suggested_vote_att_id_fk");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ActorId)
+                    .HasColumnName("actor_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.AttId)
+                    .HasColumnName("att_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Vote)
+                    .IsRequired()
+                    .HasColumnName("vote")
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Actor)
                     .WithMany(p => p.SuggestedVote)
-                    .HasForeignKey(d => d.AttPropositionId)
-                    .HasConstraintName("suggested_vote_att_proposition_id_fk");
+                    .HasForeignKey(d => d.ActorId)
+                    .HasConstraintName("suggested_vote_actor_id_fk");
+
+                entity.HasOne(d => d.Att)
+                    .WithMany(p => p.SuggestedVote)
+                    .HasForeignKey(d => d.AttId)
+                    .HasConstraintName("suggested_vote_att_id_fk");
             });
         }
     }
