@@ -7,6 +7,14 @@
     <div class="form-group col-10">
         <input class="form-control" type="text" placeholder="Att-sats" id="newAttText"/>
     </div>
+    <div class="form-group col-12">
+        <select class="form-control" type="text" value="" id="newAttVoteSuggestion">
+            <option value=""></option>
+            <option value="BIFALL">Bifall</option>
+            <option value="AVSLAG">Avslag</option>
+            <option value="INSTAM">Instäm i intentioner</option>
+        </select>
+    </div>
     
     <div class="col-12">
         <div class="btn-toolbar pull-right">
@@ -21,7 +29,6 @@
     </div>
 </div>
 
-@*TODO suggested votes*@
 
 <script type="text/javascript">
 
@@ -44,7 +51,8 @@
                 "AttId": 0,
                 "MotionId": motionId,
                 "Number": $("#newAttNumber").val(),
-                "Text": $("#newAttText").val()
+                "Text": $("#newAttText").val(),
+                "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {

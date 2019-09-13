@@ -34,7 +34,6 @@ namespace CsAspnet.Pages.Kommitteer
             var committee = await _context.Committee
                 .Include(c => c.Motion)
                 .ThenInclude(m => m.Att)
-                .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(c => c.Id == committeeId);
 
             if (committee == null)
@@ -48,7 +47,6 @@ namespace CsAspnet.Pages.Kommitteer
             var motion = await _context.Motion
                 .Include(m => m.Committee)
                 .Include(m => m.Att)
-                .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(m => m.Id == motionId);
 
             if (motion == null)

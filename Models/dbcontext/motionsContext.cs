@@ -20,15 +20,9 @@ namespace CsAspnet.Models.dbcontext
         public virtual DbSet<Committee> Committee { get; set; }
         public virtual DbSet<Motion> Motion { get; set; }
         public virtual DbSet<Response> Response { get; set; }
-        public virtual DbSet<SuggestedVote> SuggestedVote { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=localhost;user=root;database=motions");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,6 +64,11 @@ namespace CsAspnet.Models.dbcontext
                 entity.Property(e => e.MotionId)
                     .HasColumnName("motion_id")
                     .HasColumnType("int(11)");
+
+                entity.Property(e => e.SuggestedVote)
+                    .HasColumnName("suggested_vote")
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Motion)
                     .WithMany(p => p.Att)
@@ -170,45 +169,6 @@ namespace CsAspnet.Models.dbcontext
                     .WithMany(p => p.Response)
                     .HasForeignKey(d => d.MotionId)
                     .HasConstraintName("response_motion_id_fk");
-            });
-
-            modelBuilder.Entity<SuggestedVote>(entity =>
-            {
-                entity.ToTable("suggested_vote", "motions");
-
-                entity.HasIndex(e => e.ActorId)
-                    .HasName("suggested_vote_actor_id_fk");
-
-                entity.HasIndex(e => e.AttId)
-                    .HasName("suggested_vote_att_id_fk");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.ActorId)
-                    .HasColumnName("actor_id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.AttId)
-                    .HasColumnName("att_id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.Vote)
-                    .IsRequired()
-                    .HasColumnName("vote")
-                    .HasMaxLength(6)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Actor)
-                    .WithMany(p => p.SuggestedVote)
-                    .HasForeignKey(d => d.ActorId)
-                    .HasConstraintName("suggested_vote_actor_id_fk");
-
-                entity.HasOne(d => d.Att)
-                    .WithMany(p => p.SuggestedVote)
-                    .HasForeignKey(d => d.AttId)
-                    .HasConstraintName("suggested_vote_att_id_fk");
             });
         }
     }

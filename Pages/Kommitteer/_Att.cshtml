@@ -1,7 +1,34 @@
 @model CsAspnet.Models.dbcontext.Att
+@{
+    string color = "";
+    string suggestion = "Centerstudenter föreslår ";
+    switch (Model.SuggestedVote)
+    {
+        case "BIFALL":
+            color = "text-success";
+            suggestion += "bifall";
+            break;
+        case "AVSLAG":
+            color = "text-danger";
+            suggestion += "avslag";
+            break;
+        case "INSTAM":
+            color = "text-warning";
+            suggestion += "att instämma i motionens intentioner";
+            break;
+    }
+
+    string md1 = "", md2 = "";
+    if (!User.Identity.IsAuthenticated)
+    {
+        md1 = "col-md-3";
+        md2 = "col-md-9";
+    }
+}
+
 
 <dl class="row" style="margin-bottom: 0;">
-<dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3 half-form-input">
+<dt class="col-xs-6 col-sm-4 @md1 col-lg-3 half-form-input">
     @if (User.Identity.IsAuthenticated)
     {
         <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
@@ -14,9 +41,16 @@
             <i class="mdi mdi-delete"></i>
         </button>
     }
-    <text style="display: inline-block; width: 50px;">@Model.FullNumber():</text> Att
+    <text class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+          style="display: inline-block; width: 50px;">@Model.FullNumber():</text> Att
 </dt>
-<dd class="col-xs-6 col-sm-8 col-md-9 col-lg-9">@Model.AttText.ToLower()</dd>
+<dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText.ToLower()</dd>
 </dl>
 
-@*TODO suggested votes*@
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+</script>

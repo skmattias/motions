@@ -31,7 +31,6 @@ namespace CsAspnet.Pages.Admin
             var motion = await _context.Motion
                 .Include(m => m.Committee)
                 .Include(m => m.Att)
-                .ThenInclude(a => a.SuggestedVote)
                 .FirstOrDefaultAsync(m => m.Id == motionId);
 
             if (motion == null)
@@ -111,7 +110,6 @@ namespace CsAspnet.Pages.Admin
                     motion = await _context.Motion
                         .Include(m => m.Committee)
                         .Include(m => m.Att)
-                        .ThenInclude(a => a.SuggestedVote)
                         .FirstOrDefaultAsync(m => m.Id == data.MotionId);
 
                     // Check for datbase errors.
@@ -179,7 +177,6 @@ namespace CsAspnet.Pages.Admin
         public async Task<IActionResult> OnGetEditAttAsync(int attId)
         {
             var att = await _context.Att
-                .Include(a => a.SuggestedVote)
                 .Include(a => a.Motion)
                 .ThenInclude(m => m.Committee)
                 .FirstOrDefaultAsync(a => a.Id == attId);
@@ -208,6 +205,7 @@ namespace CsAspnet.Pages.Admin
             public int MotionId;
             public int? Number;
             public string Text;
+            public string VoteSuggestion;
         }
         public async Task<IActionResult> OnPostSaveAttAsync([FromBody] SaveAttPostData data)
         {
@@ -254,7 +252,8 @@ namespace CsAspnet.Pages.Admin
                     {
                         AttNumber = data.Number.Value,
                         AttText = data.Text,
-                        Motion = motion
+                        Motion = motion,
+                        SuggestedVote = data.VoteSuggestion
                     };
 
                     await _context.Att.AddAsync(att);
@@ -264,7 +263,6 @@ namespace CsAspnet.Pages.Admin
                 {
                     // Get the att proposition.
                     att = await _context.Att
-                        .Include(a => a.SuggestedVote)
                         .Include(a => a.Motion)
                         .ThenInclude(m => m.Committee)
                         .FirstOrDefaultAsync(a => a.Id == data.AttId);
@@ -280,6 +278,7 @@ namespace CsAspnet.Pages.Admin
                     // Edit the motion data.
                     att.AttNumber = data.Number.Value;
                     att.AttText = data.Text;
+                    att.SuggestedVote = data.VoteSuggestion;
                 }
 
                 // Save changes and return true.

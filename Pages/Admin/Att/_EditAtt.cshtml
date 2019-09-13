@@ -7,6 +7,14 @@
     <div class="form-group col-10">
         <input class="form-control" type="text" value="@Model.AttText.ToLower()" placeholder="Att-sats" id="editAttText"/>
     </div>
+    <div class="form-group col-12">
+        <select class="form-control" type="text" value="" id="editVoteSuggestion">
+            <option value=""></option>
+            <option value="BIFALL">Bifall</option>
+            <option value="AVSLAG">Avslag</option>
+            <option value="INSTAM">Instäm i intentioner</option>
+        </select>
+    </div>
     
     <div class="col-12">
         <div class="btn-toolbar pull-right">
@@ -44,7 +52,8 @@
                 "AttId": attId,
                 "MotionId": 0,
                 "Number": $("#editAttNumber").val(),
-                "Text": $("#editAttText").val()
+                "Text": $("#editAttText").val(),
+                "VoteSuggestion": $("#editVoteSuggestion option:selected").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
@@ -61,5 +70,12 @@
             }
         });
     }
+    
+    $(document).ready(function() {
+        // Select the correct suggested vote.
+        var suggestion = "@Model.SuggestedVote";
+        $("#editVoteSuggestion select").val(suggestion);
+        $("#editVoteSuggestion").val(suggestion).change();
+    });
 
 </script>
