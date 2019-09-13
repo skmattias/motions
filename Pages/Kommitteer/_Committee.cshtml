@@ -1,5 +1,5 @@
 @model CsAspnet.Models.dbcontext.Committee
-@* TODO bind the enter key to the appropriate ok button on all pages and views *@
+
 <div class="row">
     <div class="col-12">
         <h3 class="text-center">Kommitté @Model.FullName()</h3>
@@ -49,10 +49,15 @@
                     }
                     <div id="m-@motion.Id">
                         @{
+                            @*TODO prova att lägga in diven i partialen så att sidan inte behöver uppdateras vid add*@
                             // Initially just render all motions.
                             await Html.RenderPartialAsync("_Motion", motion);
                         }
                     </div>
+                }
+                if (User.Identity.IsAuthenticated)
+                {
+                    await Html.RenderPartialAsync("_AddMotionButton");
                 }
             }
         </div>
@@ -94,7 +99,6 @@
     // Functions:
 
     function loadMotion(motionId, button) {
-        @* TODO update the title in both of the motion lists aswell! *@
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
         $.ajax({
@@ -170,6 +174,45 @@
                     } else {
                         $(button).html(oldButtonHtml);
                     }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function addMotion(button) {
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Kommitteer/" + @Model.Id + "?handler=AddMotion",
+                data: {
+                    "committeeId": @Model.Id
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    $("#newMotionDiv").html(result);
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function cancelAddMotion(button) {
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Kommitteer/" + @Model.Id + "?handler=CancelAddMotion",
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    $("#newMotionDiv").html(result);
                 }, error: function() {
                     $(button).html(oldButtonHtml);
                 }

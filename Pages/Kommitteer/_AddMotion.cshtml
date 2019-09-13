@@ -1,0 +1,93 @@
+@* Model: committee number*@
+@model int
+
+<div class="row">
+    <div class="form-group half-form-input col-2">
+        <input class="form-control" type="number" id="newMotionNumber"/>
+    </div>
+    <div class="form-group col-10">
+        <input class="form-control" type="text" id="newMotionName"/>
+    </div>
+
+    <div class="form-group col-12">
+        <textarea class="form-control" onkeyup="autoResize(this)" id="newMotionText" 
+                  style="overflow: hidden"></textarea>
+    </div>
+    
+    <div class="col-12">
+        <div class="btn-toolbar pull-right">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="cancelAddMotion(this)">
+                Avbryt
+            </button>
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success" onclick="addNewMotion(this)">
+                Spara
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    
+    function addNewMotion(button) {
+        
+        // Spin the button immediately.
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        
+        // Add the motion.
+        $.ajax({
+            traditional: true,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            url: "/Kommitteer/" + @Model + "?handler=SaveMotion",
+            data: JSON.stringify({
+                "MotionId": 0,
+                "CommitteeId": @Model,
+                "Number": $("#newMotionNumber").val(),
+                "Name": $("#newMotionName").val(),
+                "Text": $("#newMotionText").val()
+            }),
+            contentType: 'application/json; charset=utf-8"',
+            success: function(result) {
+                if (result.result) {
+                    @*TODO *@// Update the links to the motion.
+                    // $("#motionTitleMobile-" + motionId).text(result.name);
+                    // $("#motionTitleDesktop-" + motionId).text(result.name);
+                    
+                    // Update the actual motion.
+                    // loadMotion(motionId);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                    $(button).html(oldButtonHtml);
+                }
+            }, error: function() {
+                alert("Okänt fel, prova att ladda om sidan");
+                $(button).html(oldButtonHtml);
+            }
+        });
+    }
+
+    function autoResize(textarea) {
+        var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
+        textarea.style.height = "1px";
+        var ne = textarea.scrollHeight;
+        if (ne < old) {
+            textarea.style.height = (old) + "px";
+        } else {
+            textarea.style.height = (ne) + "px";
+        }
+    }
+    
+    $(document).ready(function() {
+        autoResize(document.getElementById("editMotionText"));
+    });
+    
+</script>

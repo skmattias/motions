@@ -74,9 +74,22 @@ namespace CsAspnet.Pages.Kommitteer
             return ViewTools.GetPartialView("_EditMotion", motion);
         }
 
+        public ActionResult OnGetAddMotion(int committeeId)
+        {
+            return ViewTools.GetPartialView("_AddMotion", committeeId);
+        }
+
+        public ActionResult OnGetCancelAddMotion()
+        {
+            return ViewTools.GetPartialView("_AddMotionButton");
+        }
+
         public class SaveMotionPostData
         {
+            // Motion id if an existing motion is being edited.
             public int MotionId;
+            // Committee id if a new motion is being added.
+            public int CommitteeId;
             public int? Number;
             public string Name;
             public string Text;
@@ -103,25 +116,53 @@ namespace CsAspnet.Pages.Kommitteer
 
                 // TODO create a new motion if id == 0.
 
-                // Get the motion.
-                var motion = await _context.Motion
-                    .Include(m => m.Committee)
-                    .Include(m => m.AttProposition)
-                    .ThenInclude(a => a.SuggestedVote)
-                    .FirstOrDefaultAsync(m => m.Id == data.MotionId);
-
-                // Check for datbase errors.
-                if (motion == null)
-                    return new JsonResult(new
+                Motion motion = null;
+                
+                // Create a new motion.
+                if (data.MotionId == 0)
+                {
+                    // Get the committee.
+                    var committee = await _context.Committee.FindAsync(data.CommitteeId);
+                    if (committee == null)
+                        return new JsonResult(new
+                        {
+                            Result = false,
+                            Message = "Kommitten hittades inte i databasen. Prova att ladda om sidan."
+                        });
+                    
+                    motion = new Motion
                     {
-                        Result = false,
-                        Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
-                    });
+                        MotionNumber = data.Number.Value,
+                        MotionName = data.Name,
+                        MotionText = data.Text,
+                        Committee = committee
+                    };
 
-                // Edit the motion data.
-                motion.MotionNumber = data.Number.Value;
-                motion.MotionName = data.Name;
-                motion.MotionText = data.Text;
+                    await _context.Motion.AddAsync(motion);
+                }
+                // Edit an existing motion.
+                else
+                {
+                    // Get the motion.
+                    motion = await _context.Motion
+                        .Include(m => m.Committee)
+                        .Include(m => m.AttProposition)
+                        .ThenInclude(a => a.SuggestedVote)
+                        .FirstOrDefaultAsync(m => m.Id == data.MotionId);
+
+                    // Check for datbase errors.
+                    if (motion == null)
+                        return new JsonResult(new
+                        {
+                            Result = false,
+                            Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
+                        });
+
+                    // Edit the motion data.
+                    motion.MotionNumber = data.Number.Value;
+                    motion.MotionName = data.Name;
+                    motion.MotionText = data.Text;
+                }
 
                 // Save changes and return the new name.
                 await _context.SaveChangesAsync();
