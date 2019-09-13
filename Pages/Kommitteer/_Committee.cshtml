@@ -57,7 +57,7 @@
                 }
                 if (User.Identity.IsAuthenticated)
                 {
-                    await Html.RenderPartialAsync("_AddMotionButton");
+                    await Html.RenderPartialAsync("Admin/Motion/_AddMotionButton");
                 }
             }
         </div>
@@ -93,12 +93,11 @@
     //
     // Vars:
     var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    var editingMotion = false;
-
+    var editing = false;
+    
     //
     // Functions:
-
-    function loadMotion(motionId, button) {
+    function loadMotion(button, motionId) {
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
         $.ajax({
@@ -114,10 +113,10 @@
                 } else {
                     $(button).html(oldButtonHtml);
                 }
-                editingMotion = false;
+                editing = false;
             }, error: function() {
                 $(button).html(oldButtonHtml);
-                editingMotion = false;
+                editing = false;
             }
         });
     }
@@ -148,13 +147,16 @@
 {
     <script type="text/javascript">
         
-        function editMotion(motionId, button) {
-            if (editingMotion) {
-                alert("Du kan bara redigera en motion åt gången");
+        //
+        // Motion functions:
+        
+        function editMotion(button, motionId) {
+            if (editing) {
+                alert("Du kan bara redigera en sak åt gången");
                 return;
             }
             
-            editingMotion = true;
+            editing = true;
             
             // Spin the button immediately.
             var oldButtonHtml = $(button).html();
@@ -163,7 +165,7 @@
             // Get the edit motion-html.
             $.ajax({
                 type: "GET",
-                url: "/Kommitteer/" + @Model.Id + "?handler=EditMotion",
+                url: "/Admin/Index?handler=EditMotion",
                 data: {
                     "motionId": motionId
                 },
@@ -188,7 +190,7 @@
             // Get the add motion-html.
             $.ajax({
                 type: "GET",
-                url: "/Kommitteer/" + @Model.Id + "?handler=AddMotion",
+                url: "/Admin/Index?handler=AddMotion",
                 data: {
                     "committeeId": @Model.Id
                 },
@@ -209,10 +211,90 @@
             // Get the add motion-html.
             $.ajax({
                 type: "GET",
-                url: "/Kommitteer/" + @Model.Id + "?handler=CancelAddMotion",
+                url: "/Admin/Index?handler=CancelAddMotion",
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     $("#newMotionDiv").html(result);
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        //
+        // Att functions:
+        
+        function editAtt(button, motionId, attId) {
+            if (editing) {
+                alert("Du kan bara redigera en sak åt gången");
+                return;
+            }
+            
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the edit motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/?handler=EditAtt",
+                data: {
+                    "AttId": attId
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    if (result) {
+                        $("#a-" + motionId + "-" + attId).html(result);
+                        editing = true;
+                    } else {
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function addAtt(button, motionId) {
+            if (editing) {
+                alert("Du kan bara redigera en sak åt gången");
+                return;
+            }
+            
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Index?handler=AddAtt",
+                data: {
+                    "motionId": motionId
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    editing = true;
+                    $("#newAttDiv-" + motionId).html(result);
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function cancelAddAtt(button, motionId) {
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Index?handler=CancelAddAtt",
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    editing = false;
+                    $("#newAttDiv-" + motionId).html(result);
                 }, error: function() {
                     $(button).html(oldButtonHtml);
                 }

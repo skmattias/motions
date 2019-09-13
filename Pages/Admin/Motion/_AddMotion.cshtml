@@ -30,8 +30,6 @@
 
 <script type="text/javascript">
 
-    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    
     function addNewMotion(button) {
         
         // Spin the button immediately.
@@ -46,7 +44,7 @@
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
-            url: "/Kommitteer/" + @Model + "?handler=SaveMotion",
+            url: "/Admin/Index?handler=SaveMotion",
             data: JSON.stringify({
                 "MotionId": 0,
                 "CommitteeId": @Model,

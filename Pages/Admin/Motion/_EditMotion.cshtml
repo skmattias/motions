@@ -16,18 +16,18 @@
     <div class="col-12">
         @foreach (var att in Model.AttProposition.OrderBy(a => a.AttPropositionNumber))
         {
-            await Html.RenderPartialAsync("_AttProposition", att);
+            await Html.RenderPartialAsync("Kommitteer/_Att", att);
         }
     </div>
     
     
     <div class="col-12">
         <div class="btn-toolbar pull-right">
-            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(@Model.Id, this)">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(this, @Model.Id)">
                 Avbryt
             </button>
             @Html.AntiForgeryToken()
-            <button class="btn btn-success" onclick="saveMotion(@Model.Id, this)">
+            <button class="btn btn-success" onclick="saveMotion(this, @Model.Id)">
                 Spara
             </button>
         </div>
@@ -37,9 +37,7 @@
 
 <script type="text/javascript">
 
-    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    
-    function saveMotion(motionId, button) {
+    function saveMotion(button, motionId) {
         
         // Spin the button immediately.
         var oldButtonHtml = $(button).html();
@@ -53,7 +51,7 @@
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
-            url: "/Kommitteer/" + @Model.Committee.Id + "?handler=SaveMotion",
+            url: "/Admin/Index?handler=SaveMotion",
             data: JSON.stringify({
                 "MotionId": motionId,
                 "Number": $("#editMotionNumber").val(),
@@ -68,7 +66,7 @@
                     $("#motionTitleDesktop-" + motionId).text(result.name);
                     
                     // Update the actual motion.
-                    loadMotion(motionId);
+                    loadMotion(null, motionId);
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);

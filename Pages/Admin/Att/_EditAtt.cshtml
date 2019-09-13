@@ -10,11 +10,11 @@
     
     <div class="col-12">
         <div class="btn-toolbar pull-right">
-            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(@Model.Motion.Id, this)">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(this, @Model.Motion.Id);">
                 Avbryt
             </button>
             @Html.AntiForgeryToken()
-            <button class="btn btn-success" onclick="saveAtt(@Model.Id, this)">
+            <button class="btn btn-success" onclick="saveAtt(this, @Model.Id)">
                 Spara
             </button>
         </div>
@@ -25,9 +25,7 @@
 
 <script type="text/javascript">
 
-    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    
-    function saveAtt(attId, button) {
+    function saveAtt(button, attId) {
         
         // Spin the button immediately.
         var oldButtonHtml = $(button).html();
@@ -41,16 +39,18 @@
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
-            url: "/Kommitteer/" + @Model.Motion.Committee.Id + "?handler=SaveAtt",
+            url: "/Admin/?handler=SaveAtt",
             data: JSON.stringify({
                 "AttId": attId,
+                "MotionId": 0,
                 "Number": $("#editAttNumber").val(),
                 "Text": $("#editAttText").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
-                    loadMotion(@Model.Motion.Id);
+                    loadMotion(null, @Model.Motion.Id);
+                    editing = false;
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);

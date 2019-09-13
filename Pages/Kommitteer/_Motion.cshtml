@@ -7,7 +7,7 @@
     @if (User.Identity.IsAuthenticated)
     {
         @*TODO radera motioner*@
-        <button class="btn btn-link inline-btn-link" onclick="editMotion(@Model.Id, this)">
+        <button class="btn btn-link inline-btn-link" onclick="editMotion(this, @Model.Id)">
             <i class="mdi mdi-edit"></i>
         </button>
     }
@@ -22,54 +22,16 @@
 
 @foreach (var att in Model.AttProposition.OrderBy(a => a.AttPropositionNumber))
 {
-    <div id="a-@att.Id">
+    <div id="a-@Model.Id-@att.Id">
         @{
-            await Html.RenderPartialAsync("_AttProposition", att);
+            await Html.RenderPartialAsync("_Att", att);
         }
     </div>
+}
+@if (User.Identity.IsAuthenticated)
+{
+    await Html.RenderPartialAsync("Admin/Att/_AddAttButton", @Model.Id);
 }
 @*TODO lägg till fler att-satser*@
 @*TODO redigera att-satser*@
 @*TODO radera att-satser*@
-
-@if (User.Identity.IsAuthenticated)
-{
-    <script type="text/javascript">
-    
-        var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-        var editingAtt = false;
-    
-        function editAtt(attId, button) {
-            if (editingAtt) {
-                alert("Du kan bara redigera en att-sats åt gången");
-                return;
-            }
-            
-            editingAtt = true;
-            
-            // Spin the button immediately.
-            var oldButtonHtml = $(button).html();
-            $(button).html(buttonSpinner);
-            
-            // Get the edit motion-html.
-            $.ajax({
-                type: "GET",
-                url: "/Kommitteer/" + @Model.Committee.Id + "?handler=EditAtt",
-                data: {
-                    "AttId": attId
-                },
-                contentType: 'application/json; charset=utf-8"',
-                success: function (result) {
-                    if (result) {
-                        $("#a-" + attId).html(result);
-                    } else {
-                        $(button).html(oldButtonHtml);
-                    }
-                }, error: function() {
-                    $(button).html(oldButtonHtml);
-                }
-            });
-        }
-    
-    </script>
-}

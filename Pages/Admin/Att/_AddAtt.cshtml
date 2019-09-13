@@ -1,0 +1,65 @@
+@model int
+
+<div class="row">
+    <div class="form-group half-form-input col-2">
+        <input class="form-control" type="number" id="newAttNumber"/>
+    </div>
+    <div class="form-group col-10">
+        <input class="form-control" type="text" id="newAttText"/>
+    </div>
+    
+    <div class="col-12">
+        <div class="btn-toolbar pull-right">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="cancelAddAtt(this, @Model)">
+                Avbryt
+            </button>
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success" onclick="addNewAtt(this, @Model)">
+                Spara
+            </button>
+        </div>
+    </div>
+</div>
+
+@*TODO suggested votes*@
+
+<script type="text/javascript">
+
+    function addNewAtt(button, motionId) {
+        
+        // Spin the button immediately.
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        
+        // Add the motion.
+        $.ajax({
+            traditional: true,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            url: "/Admin/?handler=SaveAtt",
+            data: JSON.stringify({
+                "AttId": 0,
+                "MotionId": motionId,
+                "Number": $("#newAttNumber").val(),
+                "Text": $("#newAttText").val()
+            }),
+            contentType: 'application/json; charset=utf-8"',
+            success: function(result) {
+                if (result.result) {
+                    location.reload();
+                } else {
+                    alert(result.message);
+                    $(button).html(oldButtonHtml);
+                }
+            }, error: function() {
+                alert("Okänt fel, prova att ladda om sidan");
+                $(button).html(oldButtonHtml);
+            }
+        });
+    }
+    
+</script>
+

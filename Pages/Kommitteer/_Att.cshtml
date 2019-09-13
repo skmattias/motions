@@ -5,7 +5,7 @@
     @if (User.Identity.IsAuthenticated)
     {
         @*TODO radera att-satser*@
-        <button class="btn btn-link inline-btn-link" onclick="editAtt(@Model.Id, this)">
+        <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
             <i class="mdi mdi-edit"></i>
         </button>
     }
