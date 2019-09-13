@@ -7,12 +7,12 @@
 </div>
 <br/>
 
-@if (Model.Motion.Any())
-{
+<div class="row">
     @* Desktop nav bar *@
-    <div class="row">
-        <div class="col-sm-4 d-none d-sm-block">
-            <nav class="navbar navbar-light bg-light sticky-top" id="motions" 
+    <div class="col-sm-4 d-none d-sm-block">
+        @if (Model.Motion.Any())
+        {
+            <nav class="navbar navbar-light bg-light sticky-top" id="motions"
                  style="max-height: calc(100vh - 2em); overflow: auto; top: 1em;">
                 <nav class="nav nav-pills flex-column w-100">
                     @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
@@ -23,70 +23,70 @@
                     }
                 </nav>
             </nav>
-        </div>
-        
-        @* Mobile nav bar *@
-        <div class="col-12 d-sm-none">
-            <button class="btn btn-secondary" id="smallNavbar" data-toggle="modal" data-target="#allMotionsModal"
-                    style="z-index: 1020; width: calc(100vw - 2em); margin-bottom: 16px;" >
-                Alla motioner
-            </button>
-        </div>
-        
-        @* Content *@
-        <div class="col-sm-8 col-xs-12" id="motionsContent" data-offset="0">
-            @{
-                bool first = true;
-                foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
-                {
-                    if (first)
-                    {
-                        first = false;
-                    }
-                    else
-                    {
-                        <hr/>
-                    }
-                    <div id="m-@motion.Id">
-                        @{
-                            @*TODO prova att lägga in diven i partialen så att sidan inte behöver uppdateras vid add*@
-                            // Initially just render all motions.
-                            await Html.RenderPartialAsync("_Motion", motion);
-                        }
-                    </div>
-                }
-                if (User.Identity.IsAuthenticated)
-                {
-                    await Html.RenderPartialAsync("Admin/Motion/_AddMotionButton");
-                }
-            }
-        </div>
+        }
     </div>
 
-    @* All motions modal *@
-    <div class="modal fade" id="allMotionsModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
+    @* Mobile nav bar *@
+    <div class="col-12 d-sm-none">
+        <button class="btn btn-secondary" id="smallNavbar" data-toggle="modal" data-target="#allMotionsModal"
+                style="z-index: 1020; width: calc(100vw - 2em); margin-bottom: 16px;">
+            Alla motioner
+        </button>
+    </div>
+    
+    @* Content *@
+    <div class="col-sm-8 col-xs-12" id="motionsContent" data-offset="0">
+        @{
+            bool first = true;
+            foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    <hr/>
+                }
+                <div id="m-@motion.Id">
+                    @{
+                        @*TODO prova att lägga in diven i partialen så att sidan inte behöver uppdateras vid add*@
+                        // Initially just render all motions.
+                        await Html.RenderPartialAsync("_Motion", motion);
+                    }
                 </div>
-                <div class="modal-body">
-                    <ul class="list-group modal-list-group">
-                        @foreach (var motion in Model.Motion)
-                        {
-                            <a href="#m-@motion.Id" class="list-group-item text-break" 
-                               onclick="$('#allMotionsModal').modal('hide');" id="motionTitleMobile-@motion.Id">
-                                @motion.FullName()
-                            </a>
-                        }
-                    </ul>
-                </div>
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                await Html.RenderPartialAsync("Admin/Motion/_AddMotionButton");
+            }
+        }
+    </div>
+</div>
+
+@* All motions modal *@
+<div class="modal fade" id="allMotionsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group modal-list-group">
+                    @foreach (var motion in Model.Motion)
+                    {
+                        <a href="#m-@motion.Id" class="list-group-item text-break" 
+                           onclick="$('#allMotionsModal').modal('hide');" id="motionTitleMobile-@motion.Id">
+                            @motion.FullName()
+                        </a>
+                    }
+                </ul>
             </div>
         </div>
     </div>
-}
+</div>
 
 <script type="text/javascript">
 
