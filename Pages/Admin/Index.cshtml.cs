@@ -24,6 +24,157 @@ namespace CsAspnet.Pages.Admin
         }
         
         //
+        // Motion handlers:
+        
+        public async Task<IActionResult> OnGetEditMotionAsync(int motionId)
+        {
+            var motion = await _context.Motion
+                .Include(m => m.Committee)
+                .Include(m => m.AttProposition)
+                .ThenInclude(a => a.SuggestedVote)
+                .FirstOrDefaultAsync(m => m.Id == motionId);
+
+            if (motion == null)
+                return new JsonResult(false);
+            
+            return ViewTools.GetPartialView("Motion/_EditMotion", motion);
+        }
+
+        public ActionResult OnGetAddMotion(int committeeId)
+        {
+            return ViewTools.GetPartialView("Motion/_AddMotion", committeeId);
+        }
+
+        public ActionResult OnGetCancelAddMotion()
+        {
+            return ViewTools.GetPartialView("Motion/_AddMotionButton");
+        }
+
+        public class SaveMotionPostData
+        {
+            // Motion id if an existing motion is being edited.
+            public int MotionId;
+            // Committee id if a new motion is being added.
+            public int CommitteeId;
+            public int? Number;
+            public string Name;
+            public string Text;
+        }
+        public async Task<IActionResult> OnPostSaveMotionAsync([FromBody] SaveMotionPostData data)
+        {
+            try
+            {
+                // Check for data error.
+                if (data == null)
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Något gick fel när motionen skulle sparas"
+                    });
+                
+                // Check that the required data was sent.
+                if (!data.Number.HasValue)
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Ange ett motionsnummer"
+                    });
+
+                Motion motion = null;
+                
+                // Create a new motion.
+                if (data.MotionId == 0)
+                {
+                    // Get the committee.
+                    var committee = await _context.Committee.FindAsync(data.CommitteeId);
+                    if (committee == null)
+                        return new JsonResult(new
+                        {
+                            Result = false,
+                            Message = "Kommitten hittades inte i databasen. Prova att ladda om sidan."
+                        });
+                    
+                    motion = new Motion
+                    {
+                        MotionNumber = data.Number.Value,
+                        MotionName = data.Name,
+                        MotionText = data.Text,
+                        Committee = committee
+                    };
+
+                    await _context.Motion.AddAsync(motion);
+                }
+                // Edit an existing motion.
+                else
+                {
+                    // Get the motion.
+                    motion = await _context.Motion
+                        .Include(m => m.Committee)
+                        .Include(m => m.AttProposition)
+                        .ThenInclude(a => a.SuggestedVote)
+                        .FirstOrDefaultAsync(m => m.Id == data.MotionId);
+
+                    // Check for datbase errors.
+                    if (motion == null)
+                        return new JsonResult(new
+                        {
+                            Result = false,
+                            Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
+                        });
+
+                    // Edit the motion data.
+                    motion.MotionNumber = data.Number.Value;
+                    motion.MotionName = data.Name;
+                    motion.MotionText = data.Text;
+                }
+
+                // Save changes and return the new name.
+                await _context.SaveChangesAsync();
+                return new JsonResult(new
+                {
+                    Result = true,
+                    Name = motion.FullName()
+                });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new
+                {
+                    Result = false,
+                    Message = "Något gick fel när motionen skulle sparas. Exception: " + e.Message
+                });
+            }
+        }
+
+        public async Task<IActionResult> OnPostDeleteMotionAsync([FromBody] int motionId)
+        {
+            try
+            {
+                var motion = await _context.Motion.FindAsync(motionId);
+
+                // Check for datbase errors.
+                if (motion == null)
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
+                    });
+
+                _context.Motion.Remove(motion);
+                await _context.SaveChangesAsync();
+                return new JsonResult(new {Result = true});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new
+                {
+                    Result = false,
+                    Message = "Något gick fel när motionen skulle raderas. Exception: " + e.Message
+                });
+            }
+        }
+        
+        //
         // Att handler
         public async Task<IActionResult> OnGetEditAttAsync(int attId)
         {
@@ -145,125 +296,30 @@ namespace CsAspnet.Pages.Admin
             }
         }
         
-        //
-        // Motion handlers:
-        
-        public async Task<IActionResult> OnGetEditMotionAsync(int motionId)
-        {
-            var motion = await _context.Motion
-                .Include(m => m.Committee)
-                .Include(m => m.AttProposition)
-                .ThenInclude(a => a.SuggestedVote)
-                .FirstOrDefaultAsync(m => m.Id == motionId);
-
-            if (motion == null)
-                return new JsonResult(false);
-            
-            return ViewTools.GetPartialView("Motion/_EditMotion", motion);
-        }
-
-        public ActionResult OnGetAddMotion(int committeeId)
-        {
-            return ViewTools.GetPartialView("Motion/_AddMotion", committeeId);
-        }
-
-        public ActionResult OnGetCancelAddMotion()
-        {
-            return ViewTools.GetPartialView("Motion/_AddMotionButton");
-        }
-
-        public class SaveMotionPostData
-        {
-            // Motion id if an existing motion is being edited.
-            public int MotionId;
-            // Committee id if a new motion is being added.
-            public int CommitteeId;
-            public int? Number;
-            public string Name;
-            public string Text;
-        }
-        public async Task<IActionResult> OnPostSaveMotionAsync([FromBody] SaveMotionPostData data)
+        public async Task<IActionResult> OnPostDeleteAttAsync([FromBody] int attId)
         {
             try
             {
-                // Check for data error.
-                if (data == null)
+                var att = await _context.AttProposition.FindAsync(attId);
+
+                // Check for datbase errors.
+                if (att == null)
                     return new JsonResult(new
                     {
                         Result = false,
-                        Message = "Något gick fel när motionen skulle sparas"
-                    });
-                
-                // Check that the required data was sent.
-                if (!data.Number.HasValue)
-                    return new JsonResult(new
-                    {
-                        Result = false,
-                        Message = "Ange ett motionsnummer"
+                        Message = "Att-satsen hittades inte i databsen. Prova att ladda om sidan."
                     });
 
-                Motion motion = null;
-                
-                // Create a new motion.
-                if (data.MotionId == 0)
-                {
-                    // Get the committee.
-                    var committee = await _context.Committee.FindAsync(data.CommitteeId);
-                    if (committee == null)
-                        return new JsonResult(new
-                        {
-                            Result = false,
-                            Message = "Kommitten hittades inte i databasen. Prova att ladda om sidan."
-                        });
-                    
-                    motion = new Motion
-                    {
-                        MotionNumber = data.Number.Value,
-                        MotionName = data.Name,
-                        MotionText = data.Text,
-                        Committee = committee
-                    };
-
-                    await _context.Motion.AddAsync(motion);
-                }
-                // Edit an existing motion.
-                else
-                {
-                    // Get the motion.
-                    motion = await _context.Motion
-                        .Include(m => m.Committee)
-                        .Include(m => m.AttProposition)
-                        .ThenInclude(a => a.SuggestedVote)
-                        .FirstOrDefaultAsync(m => m.Id == data.MotionId);
-
-                    // Check for datbase errors.
-                    if (motion == null)
-                        return new JsonResult(new
-                        {
-                            Result = false,
-                            Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
-                        });
-
-                    // Edit the motion data.
-                    motion.MotionNumber = data.Number.Value;
-                    motion.MotionName = data.Name;
-                    motion.MotionText = data.Text;
-                }
-
-                // Save changes and return the new name.
+                _context.AttProposition.Remove(att);
                 await _context.SaveChangesAsync();
-                return new JsonResult(new
-                {
-                    Result = true,
-                    Name = motion.FullName()
-                });
+                return new JsonResult(new {Result = true});
             }
             catch (Exception e)
             {
                 return new JsonResult(new
                 {
                     Result = false,
-                    Message = "Något gick fel när motionen skulle sparas. Exception: " + e.Message
+                    Message = "Något gick fel när att-satsen skulle raderas. Exception: " + e.Message
                 });
             }
         }

@@ -58,7 +58,6 @@ namespace CsAspnet.Models.dbcontext
                 entity.HasOne(d => d.Motion)
                     .WithMany(p => p.AttProposition)
                     .HasForeignKey(d => d.MotionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("att_proposition_motion_id_fk");
             });
 
@@ -116,7 +115,6 @@ namespace CsAspnet.Models.dbcontext
                 entity.HasOne(d => d.Committee)
                     .WithMany(p => p.Motion)
                     .HasForeignKey(d => d.CommitteeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("motion_committee_id_fk");
             });
 
@@ -148,7 +146,6 @@ namespace CsAspnet.Models.dbcontext
                 entity.HasOne(d => d.AttProposition)
                     .WithMany(p => p.SuggestedVote)
                     .HasForeignKey(d => d.AttPropositionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("suggested_vote_att_proposition_id_fk");
             });
         }

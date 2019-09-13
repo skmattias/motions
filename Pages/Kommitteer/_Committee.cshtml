@@ -221,6 +221,35 @@
             });
         }
         
+        function deleteMotion(button, motionId) {
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner + oldButtonHtml);
+            
+            $.ajax({
+                traditional: true,
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: "/Admin/Index?handler=DeleteMotion",
+                data: JSON.stringify(motionId),
+                contentType: 'application/json; charset=utf-8"',
+                success: function(result) {
+                    if (result.result) {
+                        @*TODO utan att reloada?*@
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    alert("Okänt fel, prova att ladda om sidan");
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
         //
         // Att functions:
         
@@ -296,6 +325,35 @@
                     editing = false;
                     $("#newAttDiv-" + motionId).html(result);
                 }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function deleteAtt(button, attId) {
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner + oldButtonHtml);
+            
+            $.ajax({
+                traditional: true,
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: "/Admin/Index?handler=DeleteAtt",
+                data: JSON.stringify(attId),
+                contentType: 'application/json; charset=utf-8"',
+                success: function(result) {
+                    if (result.result) {
+                        @*TODO utan att reloada?*@
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    alert("Okänt fel, prova att ladda om sidan");
                     $(button).html(oldButtonHtml);
                 }
             });

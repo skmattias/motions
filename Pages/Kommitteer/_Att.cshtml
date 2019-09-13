@@ -4,9 +4,14 @@
 <dt class="col-xs-6 col-sm-4 col-md-3 col-lg-3 half-form-input">
     @if (User.Identity.IsAuthenticated)
     {
-        @*TODO radera att-satser*@
         <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
             <i class="mdi mdi-edit"></i>
+        </button>
+        @Html.AntiForgeryToken()
+        <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
+                data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?" 
+                data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+            <i class="mdi mdi-delete"></i>
         </button>
     }
     <text style="display: inline-block; width: 50px;">@Model.FullNumber():</text> Att

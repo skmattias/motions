@@ -66,9 +66,53 @@
     </footer>
 </div>
 
+@* General delete modal usage: *@
+@* data-toggle="modal" data-target="#generalDeleteModal" data-title="My modal title! *@
+@* data-onclick="myDeleteItemFunction([...])" *@
+@* General delete modal *@
+<div class="modal fade" tabindex="-1" id="generalDeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="generalDeleteModalLabel"></h4>
+                <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div id="generalDeleteModalBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                <button class="btn btn-danger btn-ok" id="generalDeleteModalDeleteButton">Radera</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="~/node_modules/jquery/dist/jquery.js"></script>
 <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
 <script src="~/js/script.js" asp-append-version="true"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        // General delete modal usage:
+        //  data-toggle="modal" data-target="#generalDeleteModal" data-title="My modal title!"
+        //  data-onclick="myDeleteItemFunction([...])"
+        var deleteModal = $("#generalDeleteModal");
+        deleteModal.on('show.bs.modal', function(e) {
+            $("#generalDeleteModalBody").html("");
+            $("#generalDeleteModalLabel").html($(e.relatedTarget).data('title'));
+            
+            $(this).find('.btn-ok').off("click");
+            $(this).find('.btn-ok').click(function() {
+                eval($(e.relatedTarget).data('onclick'));
+            });
+        });
+    })
+
+</script>
 
 @RenderSection("Scripts", required: false)
 </body>

@@ -6,9 +6,14 @@
     @* Admin edit button for the motion *@
     @if (User.Identity.IsAuthenticated)
     {
-        @*TODO radera motioner*@
         <button class="btn btn-link inline-btn-link" onclick="editMotion(this, @Model.Id)">
             <i class="mdi mdi-edit"></i>
+        </button>
+        @Html.AntiForgeryToken()
+        <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
+                data-title="Är du säker på att du vill ta bort motion @Model.FullNumber()?" 
+                data-onclick="deleteMotion($('#generalDeleteModalDeleteButton'), @Model.Id)">
+            <i class="mdi mdi-delete"></i>
         </button>
     }
     Motion @Model.FullName()
