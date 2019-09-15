@@ -53,7 +53,7 @@ namespace CsAspnet
                     options.Scope.Clear();
                     options.Scope.Add("openid");
 
-                    // Set the callback path, so Auth0 will call bach to https://localhost:5001/callback.
+                    // Set the callback path, so Auth0 will call bach to /callback.
                     options.CallbackPath = new PathString("/callback");
 
                     // Configure the Claims Issuer to be Auth0.
