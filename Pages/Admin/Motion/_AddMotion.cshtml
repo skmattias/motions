@@ -14,6 +14,10 @@
         <textarea class="form-control" onkeyup="autoResize(this)" id="newMotionText" 
                   placeholder="Text" style="overflow: hidden"></textarea>
     </div>
+    <div class="form-group col-12">
+        <textarea class="form-control" onkeyup="autoResize(this)" id="newArgument" 
+                  placeholder="Centerstudenters svar" style="overflow: hidden"></textarea>
+    </div>
     
     <div class="col-12">
         <div class="btn-toolbar pull-right">
@@ -51,7 +55,8 @@
                 "CommitteeId": @Model,
                 "Number": $("#newMotionNumber").val(),
                 "Name": $("#newMotionName").val(),
-                "Text": $("#newMotionText").val()
+                "Text": $("#newMotionText").val(),
+                "Argument": $("#newArgument").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
@@ -86,7 +91,8 @@
     }
     
     $(document).ready(function() {
-        autoResize(document.getElementById("editMotionText"));
+        autoResize(document.getElementById("newMotionText"));
+        autoResize(document.getElementById("newArgument"));
     });
     
 </script>
