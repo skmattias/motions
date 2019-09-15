@@ -1,20 +1,20 @@
 @model CsAspnet.Models.dbcontext.Att
 @{
     string color = "";
-    string suggestion = "Centerstudenter föreslår ";
+    string suggestion = "";
     switch (Model.SuggestedVote)
     {
         case "BIFALL":
             color = "text-success";
-            suggestion += "bifall";
+            suggestion += "Centerstudenter föreslår bifall";
             break;
         case "AVSLAG":
             color = "text-danger";
-            suggestion += "avslag";
+            suggestion += "Centerstudenter föreslår avslag";
             break;
         case "INSTAM":
             color = "text-warning";
-            suggestion += "att instämma i motionens intentioner";
+            suggestion += "Centerstudenter föreslår att instämma i motionens intentioner";
             break;
     }
 
