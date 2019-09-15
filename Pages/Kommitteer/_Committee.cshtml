@@ -50,7 +50,6 @@
                 }
                 <div id="m-@motion.Id">
                     @{
-                        @*TODO prova att lägga in diven i partialen så att sidan inte behöver uppdateras vid add*@
                         // Initially just render all motions.
                         await Html.RenderPartialAsync("_Motion", motion);
                     }
@@ -237,8 +236,8 @@
                 contentType: 'application/json; charset=utf-8"',
                 success: function(result) {
                     if (result.result) {
-                        @*TODO utan att reloada?*@
-                        location.reload();
+                        loadMotions();
+                        $("#generalDeleteModal").modal("hide");
                     } else {
                         alert(result.message);
                         $(button).html(oldButtonHtml);
@@ -349,8 +348,8 @@
                 contentType: 'application/json; charset=utf-8"',
                 success: function(result) {
                     if (result.result) {
-                        @*TODO utan att reloada?*@
-                        location.reload();
+                        loadMotions();
+                        $("#generalDeleteModal").modal("hide");
                     } else {
                         alert(result.message);
                         $(button).html(oldButtonHtml);

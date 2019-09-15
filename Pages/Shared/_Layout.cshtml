@@ -101,15 +101,20 @@
         //  data-toggle="modal" data-target="#generalDeleteModal" data-title="My modal title!"
         //  data-onclick="myDeleteItemFunction([...])"
         var deleteModal = $("#generalDeleteModal");
-        deleteModal.on('show.bs.modal', function(e) {
+        deleteModal.on("show.bs.modal", function(e) {
             $("#generalDeleteModalBody").html("");
-            $("#generalDeleteModalLabel").html($(e.relatedTarget).data('title'));
+            $("#generalDeleteModalLabel").html($(e.relatedTarget).data("title"));
             
             $(this).find('.btn-ok').off("click");
             $(this).find('.btn-ok').click(function() {
-                eval($(e.relatedTarget).data('onclick'));
+                eval($(e.relatedTarget).data("onclick"));
             });
         });
+        
+        // Stop spinning the button on hide.
+        deleteModal.on("hidden.bs.modal", function() {
+            $("#generalDeleteModalDeleteButton").html("Radera");
+        })
     })
 
 </script>

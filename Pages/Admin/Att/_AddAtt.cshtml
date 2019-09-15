@@ -57,7 +57,7 @@
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
-                    location.reload();
+                    loadMotions();
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);

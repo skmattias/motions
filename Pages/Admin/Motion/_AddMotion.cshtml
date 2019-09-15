@@ -61,13 +61,7 @@
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
-                    @*TODO *@// Update the links to the motion.
-                    // $("#motionTitleMobile-" + motionId).text(result.name);
-                    // $("#motionTitleDesktop-" + motionId).text(result.name);
-                    
-                    // Update the actual motion.
-                    // loadMotion(motionId);
-                    location.reload();
+                    loadMotions();
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);
