@@ -1,10 +1,15 @@
-@* Model: committee number*@
-@model int
+@* Model: committee number, nextNumber*@
+@model Tuple<int, int>
+@{
+    int committeeId = Model.Item1;
+    int nextNumber = Model.Item2;
+}
 
 <hr/>
 <div class="row">
     <div class="form-group half-form-input col-2">
-        <input class="form-control" type="number" placeholder="Nummer" id="newMotionNumber"/>
+        <input class="form-control" type="number" placeholder="Nummer" id="newMotionNumber",
+               value="@nextNumber"/>
     </div>
     <div class="form-group col-10">
         <input class="form-control" type="text" placeholder="Titel" id="newMotionName"/>
@@ -52,7 +57,7 @@
             url: "/Admin/Index?handler=SaveMotion",
             data: JSON.stringify({
                 "MotionId": 0,
-                "CommitteeId": @Model,
+                "CommitteeId": @committeeId,
                 "Number": $("#newMotionNumber").val(),
                 "Name": $("#newMotionName").val(),
                 "Text": $("#newMotionText").val(),

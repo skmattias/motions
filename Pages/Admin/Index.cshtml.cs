@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CsAspnet.Models.dbcontext;
 using CsAspnet.Models.Tools;
@@ -103,9 +104,17 @@ namespace CsAspnet.Pages.Admin
             return ViewTools.GetPartialView("Motion/_EditMotion", motion);
         }
 
-        public ActionResult OnGetAddMotion(int committeeId)
+        public async Task<ActionResult> OnGetAddMotionAsync(int committeeId)
         {
-            return ViewTools.GetPartialView("Motion/_AddMotion", committeeId);
+            int nextNumber = 1;
+            var lastMotion = await _context.Motion
+                .Where(m => m.CommitteeId == committeeId)
+                .LastOrDefaultAsync();
+
+            if (lastMotion != null)
+                nextNumber = lastMotion.MotionNumber + 1;
+            
+            return ViewTools.GetPartialView("Motion/_AddMotion", Tuple.Create(committeeId, nextNumber));
         }
 
         public ActionResult OnGetCancelAddMotion()
@@ -254,9 +263,17 @@ namespace CsAspnet.Pages.Admin
             return ViewTools.GetPartialView("Att/_EditAtt", att);
         }
         
-        public IActionResult OnGetAddAtt(int motionId)
+        public async Task<IActionResult> OnGetAddAttAsync(int motionId)
         {
-            return ViewTools.GetPartialView("Att/_AddAtt", motionId);
+            int nextNumber = 1;
+            var lastAtt = await _context.Att
+                .Where(a => a.MotionId == motionId)
+                .LastOrDefaultAsync();
+
+            if (lastAtt != null)
+                nextNumber = lastAtt.AttNumber + 1;
+            
+            return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber));
         }
 
         public IActionResult OnGetCancelAddAtt(int motionId)
