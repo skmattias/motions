@@ -13,6 +13,11 @@
                   style="overflow: hidden">@Model.MotionText</textarea>
     </div>
     
+    <div class="form-group col-12">
+        <textarea class="form-control" onkeyup="autoResize(this)" placeholder="Centerstudenters svar" id="editArgument" 
+                  style="overflow: hidden">@Model.Argument</textarea>
+    </div>
+    
     <div class="col-12">
         @foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
         {
@@ -56,7 +61,8 @@
                 "MotionId": motionId,
                 "Number": $("#editMotionNumber").val(),
                 "Name": $("#editMotionName").val(),
-                "Text": $("#editMotionText").val()
+                "Text": $("#editMotionText").val(),
+                "Argument": $("#editArgument").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
@@ -91,6 +97,7 @@
     
     $(document).ready(function() {
         autoResize(document.getElementById("editMotionText"));
+        autoResize(document.getElementById("editArgument"));
     });
     
 </script>

@@ -17,10 +17,23 @@
     Motion @Model.FullName()
 </h4>
 
-
-@foreach (var p in Model.MotionText.Split('\n'))
+@if (!string.IsNullOrWhiteSpace(Model.MotionText))
 {
-    <p>@p</p>
+    @foreach (var p in Model.MotionText.Split('\n'))
+    {
+        <p>@p</p>
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Argument))
+{
+    <h5>
+        Centerstudenters svar:
+    </h5>
+    @foreach (var p in Model.Argument.Split('\n'))
+    {
+        <p>@p</p>
+    }
 }
 
 @foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
@@ -31,6 +44,7 @@
         }
     </div>
 }
+
 @if (User.Identity.IsAuthenticated)
 {
     await Html.RenderPartialAsync("Admin/Att/_AddAttButton", @Model.Id);

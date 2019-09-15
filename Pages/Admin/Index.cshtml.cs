@@ -122,6 +122,7 @@ namespace CsAspnet.Pages.Admin
             public int? Number;
             public string Name;
             public string Text;
+            public string Argument;
         }
         public async Task<IActionResult> OnPostSaveMotionAsync([FromBody] SaveMotionPostData data)
         {
@@ -162,6 +163,7 @@ namespace CsAspnet.Pages.Admin
                         MotionNumber = data.Number.Value,
                         MotionName = data.Name,
                         MotionText = data.Text,
+                        Argument = data.Argument,
                         Committee = committee
                     };
 
@@ -188,6 +190,7 @@ namespace CsAspnet.Pages.Admin
                     motion.MotionNumber = data.Number.Value;
                     motion.MotionName = data.Name;
                     motion.MotionText = data.Text;
+                    motion.Argument = data.Argument;
                 }
 
                 // Save changes and return the new name.

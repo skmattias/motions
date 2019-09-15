@@ -15,32 +15,21 @@ namespace CsAspnet.Models.dbcontext
         {
         }
 
-        public virtual DbSet<Actor> Actor { get; set; }
         public virtual DbSet<Att> Att { get; set; }
         public virtual DbSet<Committee> Committee { get; set; }
         public virtual DbSet<Motion> Motion { get; set; }
-        public virtual DbSet<Response> Response { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySQL("server=localhost;user=root;database=motions");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Actor>(entity =>
-            {
-                entity.ToTable("actor", "motions");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.ActorName)
-                    .IsRequired()
-                    .HasColumnName("actor_name")
-                    .IsUnicode(false);
-            });
-
             modelBuilder.Entity<Att>(entity =>
             {
                 entity.ToTable("att", "motions");
@@ -109,6 +98,10 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.Argument)
+                    .HasColumnName("argument")
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CommitteeId)
                     .HasColumnName("committee_id")
                     .HasColumnType("int(11)");
@@ -131,44 +124,6 @@ namespace CsAspnet.Models.dbcontext
                     .WithMany(p => p.Motion)
                     .HasForeignKey(d => d.CommitteeId)
                     .HasConstraintName("motion_committee_id_fk");
-            });
-
-            modelBuilder.Entity<Response>(entity =>
-            {
-                entity.ToTable("response", "motions");
-
-                entity.HasIndex(e => e.ActorId)
-                    .HasName("response_actor_id_fk");
-
-                entity.HasIndex(e => e.MotionId)
-                    .HasName("response_motion_id_fk");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.ActorId)
-                    .HasColumnName("actor_id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.MotionId)
-                    .HasColumnName("motion_id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.ResponseText)
-                    .IsRequired()
-                    .HasColumnName("response_text")
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Actor)
-                    .WithMany(p => p.Response)
-                    .HasForeignKey(d => d.ActorId)
-                    .HasConstraintName("response_actor_id_fk");
-
-                entity.HasOne(d => d.Motion)
-                    .WithMany(p => p.Response)
-                    .HasForeignKey(d => d.MotionId)
-                    .HasConstraintName("response_motion_id_fk");
             });
         }
     }

@@ -8,7 +8,6 @@ namespace CsAspnet.Models.dbcontext
         public Motion()
         {
             Att = new HashSet<Att>();
-            Response = new HashSet<Response>();
         }
 
         public int Id { get; set; }
@@ -16,9 +15,9 @@ namespace CsAspnet.Models.dbcontext
         public string MotionName { get; set; }
         public string MotionText { get; set; }
         public int CommitteeId { get; set; }
+        public string Argument { get; set; }
 
         public Committee Committee { get; set; }
         public ICollection<Att> Att { get; set; }
-        public ICollection<Response> Response { get; set; }
     }
 }
