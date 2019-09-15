@@ -1,0 +1,76 @@
+@model CsAspnet.Models.dbcontext.Committee
+
+<div class="card">
+    <div class="card-body">
+        <input type="text" class="form-control" value="@Model.CommitteeName" placeholder="Namn" id="editName"/>
+        <br/>
+        <textarea class="form-control" onkeyup="autoResize(this)" placeholder="Beskrivning" id="editDescription" 
+                  style="overflow: hidden">@Model.Description</textarea>
+</div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="btn-toolbar pull-right">
+                <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadCommittee(this, @Model.Id)">
+                    Avbryt
+                </button>
+                @Html.AntiForgeryToken()
+                <button class="btn btn-success" onclick="saveCommittee(this, @Model.Id)">
+                    Spara
+                </button>
+            </div>
+        </li>
+    </ul>
+    @Html.AntiForgeryToken()
+</div>
+<br/>
+
+
+<script type="text/javascript">
+
+    function saveCommittee(button, committeeId) {
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        $.ajax({
+            traditional: true,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            url: "/Admin/Index?handler=SaveCommittee",
+            data: JSON.stringify({
+                "CommitteeId": committeeId,
+                "Name": $("#editName").val(),
+                "Description": $("#editDescription").val()
+            }),
+            contentType: 'application/json; charset=utf-8"',
+            success: function(result) {
+                if (result.result) {
+                    loadCommittee(null, committeeId);
+                } else {
+                    alert(result.message);
+                    $(button).html(oldButtonHtml);
+                }
+            }, error: function() {
+                alert("Okänt fel, prova att ladda om sidan");
+                $(button).html(oldButtonHtml);
+            }
+        });
+    }
+
+    function autoResize(textarea) {
+        var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
+        textarea.style.height = "1px";
+        var ne = textarea.scrollHeight;
+        if (ne < old) {
+            textarea.style.height = (old) + "px";
+        } else {
+            textarea.style.height = (ne) + "px";
+        }
+    }
+    
+    $(document).ready(function() {
+        autoResize(document.getElementById("editDescription"));
+    });
+
+</script>

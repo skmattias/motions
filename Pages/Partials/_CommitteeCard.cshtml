@@ -1,0 +1,24 @@
+@model CsAspnet.Models.dbcontext.Committee
+
+<div class="card">
+    <div class="card-body link-card" onclick="location.href='/Kommitteer/@Model.CommitteeNumber'">
+        <h5 class="card-title">
+            @Model.FullName()
+        </h5>
+        @foreach (var p in Model.Description.Split('\n'))
+        {
+            <p>@p</p>
+        }
+    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <button class="btn btn-link inline-btn-link" onclick="editCommittee(this, @Model.Id)">
+                    <i class="mdi mdi-edit"></i>
+                </button>
+            </li>
+        </ul>
+    }
+</div>
+<br/>

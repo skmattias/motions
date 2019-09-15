@@ -23,6 +23,70 @@ namespace CsAspnet.Pages.Admin
             return Redirect("/");
         }
         
+        // 
+        // Committee handlers:
+        public async Task<IActionResult> OnGetEditCommittee(int committeeId)
+        {
+            var committee = await _context.Committee.FindAsync(committeeId);
+            if (committee == null)
+                return new JsonResult(false);
+
+            return ViewTools.GetPartialView("Committee/_EditCommittee", committee);
+        }
+        
+        public class SaveCommitteePostData
+        {
+            public int CommitteeId;
+            public string Name;
+            public string Description;
+        }
+        
+        public async Task<IActionResult> OnPostSaveCommitteeAsync([FromBody] SaveCommitteePostData data)
+        {
+            try
+            {
+                // Check for data error.
+                if (data == null)
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Något gick fel när kommittén skulle sparas"
+                    });
+                
+                // Check that the required data was sent.
+                if (string.IsNullOrWhiteSpace(data.Name))
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Ange ett kommitténamn"
+                    });
+
+                var committee = await _context.Committee.FindAsync(data.CommitteeId);
+                if (committee == null)
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Kommittén hittades inte i databsen. Prova att ladda om sidan."
+                    });
+
+                // Edit the motion data.
+                committee.CommitteeName = data.Name;
+                committee.Description = data.Description;
+
+                // Save changes and return the new name.
+                await _context.SaveChangesAsync();
+                return new JsonResult(new {Result = true});
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new
+                {
+                    Result = false,
+                    Message = "Något gick fel när kommittén skulle sparas. Exception: " + e.Message
+                });
+            }
+        }
+        
         //
         // Motion handlers:
         

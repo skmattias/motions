@@ -7,15 +7,89 @@
 <div class="row">
     @foreach (var c in Model.Committees.OrderBy(c => c.CommitteeNumber))
     {
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card link-card" onclick="location.href='/Kommitteer/@c.CommitteeNumber'">
-                <div class="card-body">
-                    <h5 class="card-title">@c.FullName()</h5>
-                    <p class="card-text">
-                        @c.Description
-                    </p>
-                </div>
-            </div>
+        <div class="col-lg-4 col-md-6 col-sm-12" id="c-@c.Id">
+            @{
+                await Html.RenderPartialAsync("Partials/_CommitteeCard", c);
+            }
         </div>
     }
 </div>
+
+
+<script type="text/javascript">
+
+    //
+    // Vars:
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    var editing = false;
+    
+    // 
+    // Functions:
+    function loadCommittee(button, committeeId) {
+        var oldButtonHtml = $(button).html();
+        $(button).html(buttonSpinner + oldButtonHtml);
+        $.ajax({
+            type: "GET",
+            url: "/Index?handler=LoadCommittee",
+            data: {
+                "committeeId": committeeId 
+            },
+            contentType: 'application/json; charset=utf-8"',
+            success: function (result) {
+                if (result) {
+                    $("#c-" + committeeId).html(result);
+                } else {
+                    $(button).html(oldButtonHtml);
+                }
+                editing = false;
+            }, error: function() {
+                $(button).html(oldButtonHtml);
+                editing = false;
+            }
+        });
+    }
+
+</script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+    
+        // 
+        // Committee functions:
+        
+        function editCommittee(button, committeeId) {
+            if (editing) {
+                alert("du kan bara redigera en kommitte åt gången");
+                return;
+            }
+            
+            editing = true;
+            
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the edit committee card-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Index?handler=EditCommittee",
+                data: {
+                    "committeeId": committeeId
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    if (result) {
+                        $("#c-" + committeeId).html(result);
+                    } else {
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        
+    
+    </script>
+}
