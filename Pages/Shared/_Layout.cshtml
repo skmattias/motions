@@ -20,14 +20,17 @@
 
 <body data-spy="scroll" data-target="#motions" style="position: relative" class="lato-regular">
 <div class="main-container">
-    <nav class="navbar navbar-expand-sm navbar-dark shadow" id="navbar">
+    @{
+        string expand = User.Identity.IsAuthenticated ? "navbar-expand-md" : "navbar-expand-sm";
+    }
+    <nav class="navbar @expand navbar-dark shadow" id="navbar">
         <a class="navbar-brand p-3 d-none d-sm-block" asp-page="/Index">
             <img src="~/images/logo.png" style="height: 100px; width: auto;">
         </a>
         <a class="navbar-brand p-3 d-sm-none" asp-page="/Index">
             <img src="~/images/small-logo.png" style="height: 100px; width: auto;">
         </a>
-        
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -35,7 +38,7 @@
             <ul class="navbar-nav nav">
                 <li class="nav-item dropdown">
                     <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        Alla kommittéer
+                        Kommittéer
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
                         @foreach (var c in DatabaseContext.Committee.ToList())
@@ -48,15 +51,19 @@
                     </div>
                 </li>
             </ul>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="nav navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="" data-toggle="modal" data-target="#copyPasteModal">Kopieringsverktyg</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Logout">Logga ut</a>
+                    </li>
+                </ul>
+            }
         </div>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <ul class="nav navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Logout">Logga ut</a>
-                </li>
-            </ul>
-        }
     </nav>
 
     <div class="container body-content">
@@ -82,12 +89,29 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <div id="generalDeleteModalBody">
-
-            </div>
+            <div id="generalDeleteModalBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
                 <button class="btn btn-danger btn-ok" id="generalDeleteModalDeleteButton">Radera</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Copy-paste-modal *@
+<div class="modal fade" tabindex="-1" id="copyPasteModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+                <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" onkeyup="autoResize(document.getElementById('copyPasteInput'));autoResize(document.getElementById('copyPasteResult'));copyFormat();" placeholder="Text kopierad från pdf" id="copyPasteInput"></textarea>
+                <textarea class="form-control" onkeyup="autoResize(document.getElementById('copyPasteInput'));autoResize(document.getElementById('copyPasteResult'));" style="margin-top: 16px;" placeholder="Formaterad text" id="copyPasteResult"></textarea>
+                <button class="btn btn-success pull-right" style="margin-top: 16px;" onclick="copyToClipboard()">Kopiera resultatet</button>
             </div>
         </div>
     </div>
@@ -99,6 +123,130 @@
 
 <script type="text/javascript">
 
+    function autoResize(textarea) {
+        var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
+        textarea.style.height = "1px";
+        var ne = textarea.scrollHeight;
+        if (ne < old) {
+            textarea.style.height = (old) + "px";
+        } else {
+            textarea.style.height = (ne + 2) + "px";
+        }
+    }
+    
+    function copyFormat() {
+        // Idea: the first two consecutive define the numbering. Remove them and any other consecutive numbers in the
+        //       text.
+        var input = $("#copyPasteInput");
+        var result = $("#copyPasteResult");
+        var text = input.val() + " ";
+        
+        var intChars = "";
+        var readingInt = false;
+        var startPos = 0;
+        // ints: {int: startPosition}
+        var ints = {};
+        
+        // Get the positions of all integers in the text.
+        for (var i = 0; i < text.length; i++) {
+            var c = text.charAt(i);
+            if (c >= '0' && c <= '9') {
+                // If the current character is numeric.
+                // Add the char to intChars if we're already reading an int. Otherwise, start a new read.
+                if (readingInt) {
+                    intChars += c;
+                } else {
+                    intChars = c;
+                    readingInt = true;
+                    startPos = i;
+                }
+            } else if (readingInt) {
+                // Else if reading int; we have reached the end of an integer.
+                readingInt = false;
+                ints[startPos] = intChars;
+            }
+        }
+        
+        // Filter out the actual line numbers.
+        var lastConsecutiveInt = -1;
+        var lastInt = -1;
+        var lastPos = -1;
+        var leadingInts = {};
+        var foundLines = false;
+        var erase = {};
+        Object.keys(ints).forEach(function(key) {
+            var i = parseInt(ints[key]);
+            var pos = parseInt(key);
+            // {pos: i}.
+            
+            if (i === (lastConsecutiveInt + 1)) {
+                // The next line number.
+                erase[pos] = i.toString().length;
+                lastConsecutiveInt = i;
+            } else if (!foundLines) {
+                Object.keys(leadingInts).forEach(function(key) {
+                    // If this is the first int that's 1 greater than one we've seen before, it's the second line 
+                    // number.
+                    var leadingIntInt = parseInt(leadingInts[key]);
+                    var leadingIntPos = parseInt(key);
+                    if (i === (leadingIntInt + 1)) {
+                        erase[leadingIntPos] = leadingIntInt.toString().length;
+                        erase[pos] = i.toString().length;
+                        lastConsecutiveInt = i;
+                        foundLines = true;
+                    }
+                });
+                
+                leadingInts[pos] = i;
+            }
+            
+            // Save this int for the next iteration.
+            lastInt = i;
+            lastPos = pos;
+        });
+        
+        // erase: {pos: length}.
+        var lastStart = -100;
+        var checkLineBreak = false;
+        var lastLineBreakPos = -1;
+        var reversedPositions = Object.keys(erase).reverse();
+        reversedPositions.forEach(function(p) {
+            var start = parseInt(p);
+            var end = start + parseInt(erase[p]) + 1;
+            text = text.slice(0, start) + text.slice(end);
+            
+            // If a line break was inserted last time, check its line length.
+            if (checkLineBreak) {
+                checkLineBreak = false;
+                // alert("lastStart: " + lastStart + ", start: " + start + ", lastpos: " + lastLineBreakPos);
+                if (lastStart - start > 75) {
+                    text = text.slice(0, lastLineBreakPos-5) + text.slice(lastLineBreakPos-1);
+                }
+            }
+            
+            // If there was a line break, insert '!linebreak!'
+            if (text.substr(start-2, 2) === ".\n") {
+                text = text.slice(0, start) + "!lb!" + text.slice(start);
+                checkLineBreak = true;
+                lastLineBreakPos = start;
+            }
+            
+            lastStart = start;
+        });
+        
+        text = text.replace(/\n/g, " ");
+        text = text.replace(/!lb!/g, "\n");
+        result.html(text);
+        result.keyup();
+    }
+    
+    function copyToClipboard() {
+        var copyText = document.getElementById("copyPasteResult");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+        document.execCommand("copy");
+    }
+    
     $(document).ready(function() {
         // General delete modal usage:
         //  data-toggle="modal" data-target="#generalDeleteModal" data-title="My modal title!"
@@ -117,8 +265,8 @@
         // Stop spinning the button on hide.
         deleteModal.on("hidden.bs.modal", function() {
             $("#generalDeleteModalDeleteButton").html("Radera");
-        })
-    })
+        });
+    });
 
 </script>
 

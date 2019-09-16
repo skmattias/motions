@@ -84,17 +84,6 @@
         });
     }
 
-    function autoResize(textarea) {
-        var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
-        textarea.style.height = "1px";
-        var ne = textarea.scrollHeight;
-        if (ne < old) {
-            textarea.style.height = (old) + "px";
-        } else {
-            textarea.style.height = (ne) + "px";
-        }
-    }
-    
     $(document).ready(function() {
         autoResize(document.getElementById("editMotionText"));
         autoResize(document.getElementById("editArgument"));
