@@ -9,13 +9,16 @@
 
     <link rel="icon" type="image/x-icon" href="~/images/c.png"/>
 
+    @* Modified bootstrap with slightly changed colors, icons, and custom styles *@
     <link rel="stylesheet" href="~/scss/custom.css"/>
-    @* <link rel="stylesheet" href="~/node_modules/bootstrap/dist/css/bootstrap.css"/> *@
     <link rel="stylesheet" href="~/node_modules/bootstrap-material-design-icons/css/material-icons.css"/>
     <link rel="stylesheet" href="~/css/styles.css"/>
+    
+    @* Custom fonts *@
+    <link rel="stylesheet" href="~/fonts/stylesheet.css" type="text/css"/>
 </head>
 
-<body data-spy="scroll" data-target="#motions" style="position: relative">
+<body data-spy="scroll" data-target="#motions" style="position: relative" class="lato-regular">
 <div class="main-container">
     <nav class="navbar navbar-expand-sm navbar-dark shadow" id="navbar">
         <a class="navbar-brand p-3 d-none d-sm-block" asp-page="/Index">

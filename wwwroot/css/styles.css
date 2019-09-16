@@ -51,3 +51,19 @@ footer {
 .inline-btn-link {
     padding: 0;
 }
+
+.lato-regular {
+    font-family: "latoregular", sans-serif;
+}
+
+.lato-light {
+    font-family: "latolight", sans-serif;
+}
+
+.lato-bold {
+    font-family: "latobold", sans-serif;
+}
+
+.chunkfive-ex {
+    font-family: "chunkfive_exregular", serif;
+}

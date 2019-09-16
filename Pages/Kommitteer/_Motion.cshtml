@@ -1,6 +1,6 @@
 @model CsAspnet.Models.dbcontext.Motion
 
-<h4 class="text-break">
+<h4 class="text-break lato-bold">
     @* Admin edit button for the motion *@
     @if (User.Identity.IsAuthenticated)
     {
@@ -27,7 +27,7 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.Argument))
 {
-    <h5>
+    <h5 class="lato-bold">
         Centerstudenters svar:
     </h5>
     @foreach (var p in Model.Argument.Split('\n'))
