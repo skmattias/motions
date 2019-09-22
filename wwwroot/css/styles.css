@@ -1,5 +1,6 @@
 :root {
     --primary-green: #006930;
+    --light-green: #37935E;
 }
 
 #navbar {
@@ -65,4 +66,20 @@ footer {
 
 .chunkfive-ex {
     font-family: "chunkfive_exregular", serif;
+}
+
+.header-collapse-link {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.compact-card-body {
+    flex: 1 1 auto;
+    padding: 0.5rem;
+}
+
+.bg-light-green {
+    /* The primary green color, but 20% opacity */
+    background-color: rgba(0, 126, 55, 0.2);
 }

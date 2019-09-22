@@ -123,6 +123,23 @@
 
 <script type="text/javascript">
 
+    function toggleCollapseLink(item, text, targetId) {
+        var element = $(item);
+        var target = $("#" + targetId);
+        
+        // If we're in the middle of a transition, do nothing.
+        if (target.hasClass("collapsing")) {
+            return;
+        }
+        
+        // Else, toggle.
+        if (target.hasClass("show")) {
+            element.html("<i class='mdi mdi-keyboard-arrow-right'></i>&nbsp;Visa " + text);
+        } else {
+            element.html("<i class='mdi mdi-keyboard-arrow-down'></i>&nbsp;Dölj " + text);
+        }
+    }
+
     function autoResize(textarea) {
         var old = parseInt(textarea.style.height.substring(0, textarea.style.height.length - 2));
         textarea.style.height = "1px";

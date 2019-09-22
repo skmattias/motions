@@ -27,23 +27,35 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.Argument))
 {
-    <h5 class="lato-bold">
-        Centerstudenters svar:
+    <h5 class="lato-bold header-collapse-link" data-toggle="collapse" data-target="#cs-reasoning-@Model.Id" 
+        onclick="toggleCollapseLink(this, 'Centerstudenters resonemang:', 'cs-reasoning-@Model.Id');">
+        <i class="mdi mdi-keyboard-arrow-right"></i>&nbsp;Visa Centerstudenters resonemang:
     </h5>
-    @foreach (var p in Model.Argument.Split('\n'))
+    <div class="collapse" id="cs-reasoning-@Model.Id">
+        <div class="card bg-light-green">
+            <div class="compact-card-body">
+                @foreach (var p in Model.Argument.Split('\n'))
+                {
+                    <p class="card-text">@p</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Att.Any())
+{
+    <br/>
+    foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
     {
-        <p>@p</p>
+        <div id="a-@Model.Id-@att.Id">
+            @{
+                await Html.RenderPartialAsync("_Att", att);
+            }
+        </div>
     }
 }
 
-@foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
-{
-    <div id="a-@Model.Id-@att.Id">
-        @{
-            await Html.RenderPartialAsync("_Att", att);
-        }
-    </div>
-}
 
 @if (User.Identity.IsAuthenticated)
 {
