@@ -9,7 +9,7 @@
 
 <div class="row">
     @* Desktop nav bar *@
-    <div class="col-sm-4 d-none d-sm-block">
+    <div class="col-md-4 d-none d-md-block">
         @if (Model.Motion.Any())
         {
             <nav class="navbar navbar-light bg-light sticky-top shadow-sm" id="motions"
@@ -27,15 +27,15 @@
     </div>
 
     @* Mobile nav bar *@
-    <div class="col-12 d-sm-none">
+    <div class="col-12 d-md-none">
         <button class="btn btn-secondary shadow" id="smallNavbar" data-toggle="modal" data-target="#allMotionsModal"
-                style="z-index: 1020; width: calc(100vw - 2em); margin-bottom: 16px;">
+                style="z-index: 1020; width: 100%; margin-bottom: 16px;">
             Alla motioner
         </button>
     </div>
     
     @* Content *@
-    <div class="col-sm-8 col-xs-12" id="motionsContent" data-offset="0">
+    <div class="col-md-8 col-xs-12" id="motionsContent" data-offset="0">
         @{
             bool first = true;
             foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
@@ -125,6 +125,9 @@
     window.onscroll = function() {
         stickNavbar();
     };
+    window.onresize = function() {
+        stickNavbar();
+    };
     var navbar = $("#smallNavbar");
     var content = $("#motionsContent");
     var sticky = content.offset().top;
@@ -132,10 +135,12 @@
         if (navbar.is(':visible')) {
             if (window.pageYOffset >= sticky) {
                 navbar.addClass("sticky");
-                content.css('margin-top', 38 + 16);
+                content.css("margin-top", 38 + 16);
+                navbar.width(content.width() - 26);
             } else {
                 navbar.removeClass("sticky");
-                content.css('margin-top', 0);
+                content.css("margin-top", 0);
+                navbar.css("width", "100%");
             }
         }
     }
