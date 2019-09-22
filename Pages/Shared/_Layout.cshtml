@@ -71,6 +71,13 @@
         @RenderBody()
         <br/>
     </div>
+    
+    @* For detecting screen size *@
+    <div class="device-xs d-block d-sm-none"></div>
+    <div class="device-sm d-none d-sm-block"></div>
+    <div class="device-md d-none d-md-block"></div>
+    <div class="device-lg d-none d-lg-block"></div>
+    
     <footer class="mt-auto py-3 text-center bg-light">
         <img src="~/images/sanning.png" style="height: 200px;" alt=""/>
     </footer>
@@ -122,6 +129,10 @@
 <script src="~/js/script.js" asp-append-version="true"></script>
 
 <script type="text/javascript">
+
+    function isBreakpoint(alias) {
+        return $(".device-" + alias).is(":visible");
+    }
 
     function toggleCollapseLink(item, text, targetId) {
         var element = $(item);
@@ -290,3 +301,5 @@
 @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+@*dotnet ef dbcontext scaffold "server=localhost;database=motions;user=root" MySql.Data.EntityFrameworkCore -o Models/dbcontext -f*@

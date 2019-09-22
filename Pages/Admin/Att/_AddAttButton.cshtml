@@ -2,7 +2,11 @@
 @model int
 
 <div id="newAttDiv-@Model">
-    <button class="btn btn-link" onclick="addAtt(this, @Model)">
+    <button class="btn btn-link" onclick="addAtt(this, @Model, false)">
         <i class="mdi mdi-add"></i> Ny att-sats
+    </button>
+    
+    <button class="btn btn-link" onclick="addAtt(this, @Model, true)">
+        <i class="mdi mdi-add"></i> Nytt tilläggsyrkande
     </button>
 </div>

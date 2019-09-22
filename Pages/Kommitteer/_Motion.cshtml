@@ -19,7 +19,7 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.MotionText))
 {
-    @foreach (var p in Model.MotionText.Split('\n'))
+    foreach (var p in Model.MotionText.Split('\n'))
     {
         <p>@p</p>
     }
@@ -43,19 +43,42 @@
     </div>
 }
 
-@if (Model.Att.Any())
-{
-    <br/>
-    foreach (var att in Model.Att.OrderBy(a => a.AttNumber))
+@{
+    var atts = Model.Att
+        .Where(a => string.IsNullOrWhiteSpace(a.Author))
+        .OrderBy(a => a.AttNumber)
+        .ToList();
+    
+    if (atts.Any())
     {
-        <div id="a-@Model.Id-@att.Id">
-            @{
-                await Html.RenderPartialAsync("_Att", att);
-            }
-        </div>
+        <br/>
+        foreach (var att in atts)
+        {
+            <div id="a-@Model.Id-@att.Id">
+                @{
+                    await Html.RenderPartialAsync("_Att", att);
+                }
+            </div>
+        }
+    }
+
+    var newAtts = Model.Att
+        .Where(a => !string.IsNullOrWhiteSpace(a.Author))
+        .ToList();
+
+    if (newAtts.Any())
+    {
+        <br/>
+        foreach (var att in newAtts)
+        {
+            <div id="a-@Model.Id-@att.Id">
+                @{
+                    await Html.RenderPartialAsync("_Att", att);
+                }
+            </div>
+        }
     }
 }
-
 
 @if (User.Identity.IsAuthenticated)
 {

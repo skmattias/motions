@@ -288,7 +288,7 @@
             });
         }
         
-        function addAtt(button, motionId) {
+        function addAtt(button, motionId, additionalAtt) {
             if (editing) {
                 alert("Du kan bara redigera en sak åt gången");
                 return;
@@ -303,7 +303,8 @@
                 type: "GET",
                 url: "/Admin/Index?handler=AddAtt",
                 data: {
-                    "motionId": motionId
+                    "motionId": motionId,
+                    "additionalAtt": additionalAtt
                 },
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {

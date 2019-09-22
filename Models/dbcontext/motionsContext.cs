@@ -41,14 +41,18 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("att_text")
                     .IsUnicode(false);
 
+                entity.Property(e => e.Author)
+                    .HasColumnName("author")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MainProposal)
+                    .HasColumnName("main_proposal")
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.MotionId)
                     .HasColumnName("motion_id")
                     .HasColumnType("int(11)");
-
-                entity.Property(e => e.PsAgrees)
-                    .HasColumnName("ps_agrees")
-                    .HasColumnType("tinyint(1)")
-                    .HasDefaultValueSql("0");
 
                 entity.Property(e => e.SuggestedVote)
                     .HasColumnName("suggested_vote")

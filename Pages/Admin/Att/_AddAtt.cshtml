@@ -1,35 +1,64 @@
 @* Model motionId, nextNumber *@
-@model Tuple<int, int>
+@model Tuple<int, int, bool>
 @{
     int motionId = Model.Item1;
     int nextNumber = Model.Item2;
+    bool additionalAtt = Model.Item3;
 }
 
 <div class="row">
-    <div class="form-group half-form-input col-2">
-        <input class="form-control" type="number" placeholder="Nummer" id="newAttNumber"
-               value="@nextNumber"/>
-    </div>
-    <div class="form-group col-10">
+    @{
+        string col;
+        if (additionalAtt)
+        {
+            // Tilläggsyrkande.
+            col = "8";
+            <div class="form-group half-form-input col-4">
+                <select class="form-control" type="text" value="" id="additionalAttAuthor">
+                    <option value="PS">PS</option>
+                    <option value="CUF">CUF</option>
+                    <option value="CS">CS</option>
+                    <option value="K">Kommittén</option>
+                </select>
+            </div>
+            
+            // Hidden input for the ajax post.
+            <input id="newAttNumber" value="0" hidden/>
+        }
+        else
+        {
+            // Att-sats.
+            col = "10";
+            <div class="form-group half-form-input col-2">
+                <input class="form-control" type="number" placeholder="Nummer" id="newAttNumber"
+                       value="@nextNumber"/>
+            </div>
+            
+            // Hidden input for the ajax post.
+            <select id="additionalAttAuthor" hidden><option value="" selected></option></select>
+        }
+    }
+    
+    <div class="form-group col-@col">
         <textarea class="form-control" type="text" onkeyup="autoResize(this)" placeholder="Att-sats" id="newAttText"></textarea>
     </div>
-    <div class="form-group col-12">
-        <div class="input-group">
-            <select class="form-control" type="text" value="" id="newAttVoteSuggestion">
-                <option value="">Centerstudenter föreslår:</option>
-                <option value="BIFALL">Bifall</option>
-                <option value="AVSLAG">Avslag</option>
-                <option value="INSTAM">Instäm i intentioner</option>
-            </select>
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    Motförslag mot PS:&nbsp;<input type="checkbox" id="newAttVoteSuggestionAgainstPs"/>
-                </div>
-            </div>
-        </div>
-        
+    <div class="form-group col-sm-6" id="half-form">
+        <select class="form-control" type="text" value="" id="newAttVoteSuggestion">
+            <option value="">Centerstudenters förslag:</option>
+            <option value="BIFALL">Bifall</option>
+            <option value="AVSLAG">Avslag</option>
+            <option value="INSTAM">Instäm i intentioner</option>
+        </select>
     </div>
-    
+    <div class="form-group col-sm-6">
+        <select class="form-control" type="text" value="" id="newAttMainProposal">
+            <option value="">Huvudförslag:</option>
+            <option value="BIFALL">Bifall</option>
+            <option value="AVSLAG">Avslag</option>
+            <option value="INSTAM">Instäm i intentioner</option>
+        </select>
+    </div>
+
     <div class="col-12">
         <div class="btn-toolbar pull-right">
             <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="cancelAddAtt(this, @motionId)">
@@ -73,7 +102,8 @@
                 "Number": $("#newAttNumber").val(),
                 "Text": $("#newAttText").val(),
                 "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val(),
-                "PsAgrees": psAgrees
+                "MainProposal": $("#newAttMainProposal option:selected").val(),
+                "AdditionalAttAuthor": $("#additionalAttAuthor option:selected").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
@@ -90,10 +120,20 @@
         });
     }
     
+    function setFormPadding() {
+        if (isBreakpoint("sm")) {
+            $("#half-form").addClass("half-form-input");
+        } else {
+            $("#half-form").removeClass("half-form-input");
+        }
+    }
+    
     $(document).ready(function() {
         $("#newAttNumber").focus();
         $("#newAttText").keyup();
-    })
+        
+        setFormPadding();
+        window.addEventListener("resize", setFormPadding);
+    });
     
 </script>
-

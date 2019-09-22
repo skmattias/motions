@@ -10,7 +10,8 @@ namespace CsAspnet.Models.dbcontext
         public string AttText { get; set; }
         public int MotionId { get; set; }
         public string SuggestedVote { get; set; }
-        public byte PsAgrees { get; set; }
+        public string MainProposal { get; set; }
+        public string Author { get; set; }
 
         public Motion Motion { get; set; }
     }

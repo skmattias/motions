@@ -1,40 +1,21 @@
 @model CsAspnet.Models.dbcontext.Att
 @{
-    // The thumb indicates out suggested votes.
-    string thumb = "";
     // The color indicates whether PS agrees.
     string color = "";
-    string thumbColor = "";
     string suggestion = "";
     switch (Model.SuggestedVote)
     {
         case "BIFALL":
-            thumb = "thumb-up";
             suggestion += "Centerstudenter föreslår bifall";
-            if (Model.PsAgrees == 0)
-            {
-                color = "text-success";
-                suggestion += ", mot PS förslag";
-            }
+            color = "text-success";
             break;
         case "AVSLAG":
-            thumb = "thumb-down";
             suggestion += "Centerstudenter föreslår avslag";
-            if (Model.PsAgrees == 0)
-            {
-                color = "text-danger";
-                suggestion += ", mot PS förslag";
-            }
+            color = "text-danger";
             break;
         case "INSTAM":
-            thumb = "maximize";
             suggestion += "Centerstudenter föreslår att instämma i motionens intentioner";
             break;
-    }
-
-    if (color == "")
-    {
-        thumbColor = "text-muted";
     }
     
     string md1 = "", md2 = "";
@@ -60,9 +41,12 @@
             <i class="mdi mdi-delete"></i>
         </button>
     }
+    @{
+        string author = string.IsNullOrWhiteSpace(Model.Author) ? Model.FullNumber() : Model.Author;
+    }
     <text class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
           style="display: inline-block; width: 70px;">
-        <i class="mdi mdi-@thumb @thumbColor" style="width: 16px;"></i>&nbsp;@Model.FullNumber():
+        @author:
     </text> Att
 </dt>
 <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>

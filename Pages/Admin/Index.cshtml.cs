@@ -263,7 +263,7 @@ namespace CsAspnet.Pages.Admin
             return ViewTools.GetPartialView("Att/_EditAtt", att);
         }
         
-        public async Task<IActionResult> OnGetAddAttAsync(int motionId)
+        public async Task<IActionResult> OnGetAddAttAsync(int motionId, bool additionalAtt)
         {
             int nextNumber = 1;
             var lastAtt = await _context.Att
@@ -273,7 +273,7 @@ namespace CsAspnet.Pages.Admin
             if (lastAtt != null)
                 nextNumber = lastAtt.AttNumber + 1;
             
-            return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber));
+            return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber, additionalAtt));
         }
 
         public IActionResult OnGetCancelAddAtt(int motionId)
@@ -290,7 +290,8 @@ namespace CsAspnet.Pages.Admin
             public int? Number;
             public string Text;
             public string VoteSuggestion;
-            public bool PsAgrees;
+            public string MainProposal;
+            public string AdditionalAttAuthor;
         }
         public async Task<IActionResult> OnPostSaveAttAsync([FromBody] SaveAttPostData data)
         {
@@ -319,9 +320,6 @@ namespace CsAspnet.Pages.Admin
                         Message = "Ange en text för att-satsen"
                     });
                 
-                // Convert ps agrees from bool to byte.
-                byte psAgrees = Convert.ToByte(data.PsAgrees);
-
                 Att att = null;
                 
                 // Create a new att.
@@ -342,7 +340,8 @@ namespace CsAspnet.Pages.Admin
                         AttText = data.Text,
                         Motion = motion,
                         SuggestedVote = data.VoteSuggestion,
-                        PsAgrees = psAgrees
+                        MainProposal = data.MainProposal,
+                        Author = data.AdditionalAttAuthor
                     };
 
                     await _context.Att.AddAsync(att);
@@ -368,7 +367,8 @@ namespace CsAspnet.Pages.Admin
                     att.AttNumber = data.Number.Value;
                     att.AttText = data.Text;
                     att.SuggestedVote = data.VoteSuggestion;
-                    att.PsAgrees = psAgrees;
+                    att.MainProposal = data.MainProposal;
+                    att.Author = data.AdditionalAttAuthor;
                 }
 
                 // Save changes and return true.
