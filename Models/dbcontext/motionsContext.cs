@@ -45,6 +45,11 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("motion_id")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.PsAgrees)
+                    .HasColumnName("ps_agrees")
+                    .HasColumnType("tinyint(1)")
+                    .HasDefaultValueSql("0");
+
                 entity.Property(e => e.SuggestedVote)
                     .HasColumnName("suggested_vote")
                     .HasMaxLength(6)
