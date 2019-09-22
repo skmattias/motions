@@ -3,7 +3,8 @@
     // The thumb indicates out suggested votes.
     string thumb = "";
     // The color indicates whether PS agrees.
-    string color = "text-muted";
+    string color = "";
+    string thumbColor = "";
     string suggestion = "";
     switch (Model.SuggestedVote)
     {
@@ -31,6 +32,11 @@
             break;
     }
 
+    if (color == "")
+    {
+        thumbColor = "text-muted";
+    }
+    
     string md1 = "", md2 = "";
     if (!User.Identity.IsAuthenticated)
     {
@@ -56,7 +62,7 @@
     }
     <text class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
           style="display: inline-block; width: 70px;">
-        <i class="mdi mdi-@thumb" style="width: 16px;"></i>&nbsp;@Model.FullNumber():
+        <i class="mdi mdi-@thumb @thumbColor" style="width: 16px;"></i>&nbsp;@Model.FullNumber():
     </text> Att
 </dt>
 <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>
