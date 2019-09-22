@@ -14,12 +14,20 @@
         <textarea class="form-control" type="text" onkeyup="autoResize(this)" placeholder="Att-sats" id="newAttText"></textarea>
     </div>
     <div class="form-group col-12">
-        <select class="form-control" type="text" value="" id="newAttVoteSuggestion">
-            <option value="">Centerstudenter föreslår:</option>
-            <option value="BIFALL">Bifall</option>
-            <option value="AVSLAG">Avslag</option>
-            <option value="INSTAM">Instäm i intentioner</option>
-        </select>
+        <div class="input-group">
+            <select class="form-control" type="text" value="" id="newAttVoteSuggestion">
+                <option value="">Centerstudenter föreslår:</option>
+                <option value="BIFALL">Bifall</option>
+                <option value="AVSLAG">Avslag</option>
+                <option value="INSTAM">Instäm i intentioner</option>
+            </select>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    Motförslag mot PS:&nbsp;<input type="checkbox" id="newAttVoteSuggestionAgainstPs"/>
+                </div>
+            </div>
+        </div>
+        
     </div>
     
     <div class="col-12">
@@ -44,6 +52,12 @@
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
         
+        // Invert to ps agrees.
+        var psAgrees = true;
+        if ($("#newAttVoteSuggestionAgainstPs").prop("checked") == true) {
+            psAgrees = false;
+        }
+        
         // Add the motion.
         $.ajax({
             traditional: true,
@@ -58,7 +72,8 @@
                 "MotionId": motionId,
                 "Number": $("#newAttNumber").val(),
                 "Text": $("#newAttText").val(),
-                "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val()
+                "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val(),
+                "PsAgrees": psAgrees
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {

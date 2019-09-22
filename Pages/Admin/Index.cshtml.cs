@@ -290,6 +290,7 @@ namespace CsAspnet.Pages.Admin
             public int? Number;
             public string Text;
             public string VoteSuggestion;
+            public bool PsAgrees;
         }
         public async Task<IActionResult> OnPostSaveAttAsync([FromBody] SaveAttPostData data)
         {
@@ -317,6 +318,9 @@ namespace CsAspnet.Pages.Admin
                         Result = false,
                         Message = "Ange en text för att-satsen"
                     });
+                
+                // Convert ps agrees from bool to byte.
+                byte psAgrees = Convert.ToByte(data.PsAgrees);
 
                 Att att = null;
                 
@@ -337,7 +341,8 @@ namespace CsAspnet.Pages.Admin
                         AttNumber = data.Number.Value,
                         AttText = data.Text,
                         Motion = motion,
-                        SuggestedVote = data.VoteSuggestion
+                        SuggestedVote = data.VoteSuggestion,
+                        PsAgrees = psAgrees
                     };
 
                     await _context.Att.AddAsync(att);
@@ -363,6 +368,7 @@ namespace CsAspnet.Pages.Admin
                     att.AttNumber = data.Number.Value;
                     att.AttText = data.Text;
                     att.SuggestedVote = data.VoteSuggestion;
+                    att.PsAgrees = psAgrees;
                 }
 
                 // Save changes and return true.
