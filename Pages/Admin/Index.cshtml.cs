@@ -234,6 +234,14 @@ namespace CsAspnet.Pages.Admin
                         Message = "Motionen hittades inte i databsen. Prova att ladda om sidan."
                     });
 
+                // Check for motion group ps att:s.
+                if (await _context.Att.AnyAsync(a => a.MotionId == motion.Id && a.IsPsAtt()))
+                    return new JsonResult(new
+                    {
+                        Result = false,
+                        Message = "Du måste ta bort alla att-satser från PS innan du kan ta bort motionen"
+                    });
+                
                 _context.Motion.Remove(motion);
                 await _context.SaveChangesAsync();
                 return new JsonResult(new {Result = true});
@@ -263,7 +271,13 @@ namespace CsAspnet.Pages.Admin
             return ViewTools.GetPartialView("Att/_EditAtt", att);
         }
         
-        public async Task<IActionResult> OnGetAddAttAsync(int motionId, bool additionalAtt)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="motionId"></param>
+        /// <param name="attType">0: att-sats, 1: tilläggsyrkande, 2: ps att-sats</param>
+        /// <returns></returns>
+        public async Task<IActionResult> OnGetAddAttAsync(int motionId, int attType)
         {
             int nextNumber = 1;
             var lastAtt = await _context.Att
@@ -273,12 +287,12 @@ namespace CsAspnet.Pages.Admin
             if (lastAtt != null)
                 nextNumber = lastAtt.AttNumber + 1;
             
-            return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber, additionalAtt));
+            return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber, attType));
         }
 
-        public IActionResult OnGetCancelAddAtt(int motionId)
+        public IActionResult OnGetCancelAddAtt(int motionId, int attType)
         {
-            return ViewTools.GetPartialView("Att/_AddAttButton", motionId);
+            return ViewTools.GetPartialView(attType == 2 ? "Att/_AddPsAttButton" : "Att/_AddAttButton", motionId);
         }
         
         public class SaveAttPostData

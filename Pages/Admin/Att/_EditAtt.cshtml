@@ -2,8 +2,30 @@
 
 <div class="row">
     @{
+        int attType;
+        if (Model.IsPsAtt())
+        {
+            attType = 2;
+        }
+        else if (!string.IsNullOrWhiteSpace(Model.Author))
+        {
+            attType = 1;
+        }
+        else
+        {
+            attType = 0;
+        }
+                 
         string col;
-        if (!string.IsNullOrWhiteSpace(Model.Author))
+        if (attType == 2)
+        {
+            col = "12";
+
+            // Hidden inputs for the ajax post.
+            <input id="editAttNumber" value="-1" hidden/>
+            <input id="additionalAttAuthor" value="" hidden/>
+        }
+        else if (attType == 1)
         {
             // Tilläggsyrkande.
             col = "8";
@@ -50,9 +72,18 @@
 
     <div class="col-12">
         <div class="btn-toolbar pull-right">
-            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(this, @Model.Motion.Id);">
-                Avbryt
-            </button>
+            @if (attType == 2)
+            {
+                <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotions();">
+                    Avbryt
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(this, @Model.Motion.Id);">
+                    Avbryt
+                </button>
+            }
             @Html.AntiForgeryToken()
             <button class="btn btn-success" onclick="saveAtt(this, @Model.Id)">
                 Spara
@@ -98,7 +129,14 @@
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
-                    loadMotion(null, @Model.Motion.Id);
+                    @if (attType == 2)
+                    {
+                        @:loadMotions();
+                    }
+                    else
+                    {
+                        @:loadMotion(null, @Model.Motion.Id);
+                    }
                     editing = false;
                 } else {
                     alert(result.message);

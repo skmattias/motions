@@ -72,7 +72,8 @@
                     $("#motionTitleDesktop-" + motionId).text(result.name);
                     
                     // Update the actual motion.
-                    loadMotion(null, motionId);
+                    // loadMotion(null, motionId);
+                    loadMotions()
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);

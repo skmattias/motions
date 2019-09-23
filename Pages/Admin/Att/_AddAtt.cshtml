@@ -1,15 +1,19 @@
 @* Model motionId, nextNumber *@
-@model Tuple<int, int, bool>
+@model Tuple<int, int, int>
 @{
     int motionId = Model.Item1;
     int nextNumber = Model.Item2;
-    bool additionalAtt = Model.Item3;
+    int attType = Model.Item3;
+    // 0: att-sats.
+    // 1: tilläggsyrkande.
+    // 2: ps att-sats.
 }
 
 <div class="row">
     @{
         string col;
-        if (additionalAtt)
+        
+        if (attType == 1)
         {
             // Tilläggsyrkande.
             col = "8";
@@ -20,7 +24,15 @@
             // Hidden input for the ajax post.
             <input id="newAttNumber" value="0" hidden/>
         }
-        else
+        else if (attType == 2)
+        {
+            col = "12";
+
+            // Hidden inputs for the ajax post.
+            <input id="newAttNumber" value="-1" hidden/>
+            <input id="additionalAttAuthor" value="" hidden/>
+        }
+        else // if attType == 0
         {
             // Att-sats.
             col = "10";
@@ -56,7 +68,7 @@
 
     <div class="col-12">
         <div class="btn-toolbar pull-right">
-            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="cancelAddAtt(this, @motionId)">
+            <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="cancelAddAtt(this, @motionId, @attType)">
                 Avbryt
             </button>
             @Html.AntiForgeryToken()

@@ -1,40 +1,49 @@
-@model CsAspnet.Models.dbcontext.Motion
+@*@model CsAspnet.Models.dbcontext.Motion*@
+@using CsAspnet.Models.dbcontext
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model Tuple<List<Motion>, int>
+@{
+    var motions = Model.Item1;
+    int i = Model.Item2;
+    
+    var motion = motions[i];
+}
 
 <h4 class="text-break lato-bold">
     @* Admin edit button for the motion *@
     @if (User.Identity.IsAuthenticated)
     {
-        <button class="btn btn-link inline-btn-link" onclick="editMotion(this, @Model.Id)">
+        <button class="btn btn-link inline-btn-link" onclick="editMotion(this, @motion.Id)">
             <i class="mdi mdi-edit"></i>
         </button>
         @Html.AntiForgeryToken()
         <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
-                data-title="Är du säker på att du vill ta bort motion @Model.FullNumber()?" 
-                data-onclick="deleteMotion($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                data-title="Är du säker på att du vill ta bort motion @motion.FullNumber()?" 
+                data-onclick="deleteMotion($('#generalDeleteModalDeleteButton'), @motion.Id)">
             <i class="mdi mdi-delete"></i>
         </button>
     }
-    Motion @Model.FullName()
+    Motion @motion.FullName()
 </h4>
 
-@if (!string.IsNullOrWhiteSpace(Model.MotionText))
+@if (!string.IsNullOrWhiteSpace(motion.MotionText))
 {
-    foreach (var p in Model.MotionText.Split('\n'))
+    foreach (var p in motion.MotionText.Split('\n'))
     {
         <p>@p</p>
     }
 }
 
-@if (!string.IsNullOrWhiteSpace(Model.Argument))
+@if (!string.IsNullOrWhiteSpace(motion.Argument))
 {
-    <a class="lato-bold header-collapse-link btn btn-link" data-toggle="collapse" data-target="#cs-reasoning-@Model.Id" 
-        onclick="toggleCollapseLink(this, 'Centerstudenters resonemang:', 'cs-reasoning-@Model.Id');">
-        <i class="mdi mdi-keyboard-arrow-right"></i>&nbsp;Visa Centerstudenters resonemang:
+    <a class="lato-bold header-collapse-link btn btn-link" data-toggle="collapse" data-target="#cs-reasoning-@motion.Id" 
+        onclick="toggleCollapseLink(this, 'Centerstudenters resonemang:', 'cs-reasoning-@motion.Id');">
+        <i class="mdi mdi-keyboard-arrow-right" style="z-index: -1;"></i>&nbsp;Visa Centerstudenters resonemang:
     </a>
-    <div class="collapse" id="cs-reasoning-@Model.Id">
+    <div class="collapse" id="cs-reasoning-@motion.Id">
         <div class="card bg-light-green">
             <div class="compact-card-body">
-                @foreach (var p in Model.Argument.Split('\n'))
+                @foreach (var p in motion.Argument.Split('\n'))
                 {
                     <p class="card-text">@p</p>
                 }
@@ -44,17 +53,17 @@
 }
 
 @{
-    var atts = Model.Att
-        .Where(a => string.IsNullOrWhiteSpace(a.Author))
+    var atts = motion.Att
+        .Where(a => string.IsNullOrWhiteSpace(a.Author) && !a.IsPsAtt())
         .OrderBy(a => a.AttNumber)
         .ToList();
     
     if (atts.Any())
     {
-        <br/>
+        <h5 class="lato-bold" style="padding-top: 1rem;">Att-satser:</h5>
         foreach (var att in atts)
         {
-            <div id="a-@Model.Id-@att.Id">
+            <div id="a-@att.Id">
                 @{
                     await Html.RenderPartialAsync("_Att", att);
                 }
@@ -62,16 +71,16 @@
         }
     }
 
-    var newAtts = Model.Att
-        .Where(a => !string.IsNullOrWhiteSpace(a.Author))
+    var newAtts = motion.Att
+        .Where(a => !string.IsNullOrWhiteSpace(a.Author) && !a.IsPsAtt())
         .ToList();
 
     if (newAtts.Any())
     {
-        <br/>
+        <h5 class="lato-bold" style="padding-top: 1rem;">Tilläggsyrkanden:</h5>
         foreach (var att in newAtts)
         {
-            <div id="a-@Model.Id-@att.Id">
+            <div id="a-@att.Id">
                 @{
                     await Html.RenderPartialAsync("_Att", att);
                 }
@@ -82,5 +91,9 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    await Html.RenderPartialAsync("Admin/Att/_AddAttButton", Model.Id);
+    await Html.RenderPartialAsync("Admin/Att/_AddAttButton", motion.Id);
+}
+
+@{
+    await Html.RenderPartialAsync("_PsAttList", Model);
 }

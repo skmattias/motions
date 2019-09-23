@@ -1,0 +1,66 @@
+@using CsAspnet.Models.dbcontext
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model Tuple<List<Motion>, int>
+@{
+    var motions = Model.Item1;
+    int i = Model.Item2;
+    
+    var motion = motions[i];
+    
+    try
+    {
+        // If this is the last consecutive motion with the same name.
+        bool last = false;
+        string nextMotionName = string.Empty;
+        try
+        {
+            nextMotionName = motions[i + 1].MotionName;
+        }
+        catch (Exception)
+        {
+            last = true;
+        }
+        if (last || nextMotionName != motion.MotionName)
+        {
+            // List PS att:s.
+            // From this motion backwards j > 0 and the motions have the same name.
+            var consecutiveMotions = new List<Motion>();
+            for (int j = i; j >= 0 && motions[j].MotionName == motion.MotionName; j--)
+            {
+                consecutiveMotions.Add(motions[j]);
+            }
+            var psAtts = consecutiveMotions.SelectMany(m => m.Att.Where(a => a.IsPsAtt())).ToList();
+            if (psAtts.Any())
+            {
+                <hr/>
+                <h4 class="text-break lato-bold">@motion.MotionName: PS att-satser</h4>
+                foreach (var att in psAtts)
+                {
+                    <div id="a-@att.Id">
+                        @{
+                            await Html.RenderPartialAsync("_Att", att);
+                        }
+                    </div>
+                }
+            }
+            
+            // Add PS att-button.
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!psAtts.Any())
+                {
+                    <hr/>
+                }
+
+                await Html.RenderPartialAsync("Admin/Att/_AddPsAttButton", motion.Id);
+            }
+        }
+    }
+    catch (Exception)
+    {
+        // Catch out of range-exception, null reference exceptions, etc. Doesn't matter, just don't add
+        // the button.
+    }
+}
+
+

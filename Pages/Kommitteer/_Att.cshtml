@@ -43,10 +43,18 @@
     }
     @{
         string author = string.IsNullOrWhiteSpace(Model.Author) ? Model.FullNumber() : Model.Author;
+        if (Model.IsPsAtt())
+        {
+            author = "";
+        }
+        else
+        {
+            author += ":";
+        }
     }
     <text class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
           style="display: inline-block; width: 70px;">
-        @author:
+        @author
     </text> Att
 </dt>
 <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>

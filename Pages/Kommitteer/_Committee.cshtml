@@ -1,3 +1,4 @@
+@using CsAspnet.Models.dbcontext
 @model CsAspnet.Models.dbcontext.Committee
 
 <div class="row">
@@ -38,8 +39,12 @@
     <div class="col-md-8 col-xs-12" id="motionsContent" data-offset="0">
         @{
             bool first = true;
-            foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
+            var motions = Model.Motion.OrderBy(m => m.MotionNumber).ToList();
+            // TODO lista med ps-att-satser, fyll på om vi hittar id 999, printa sist.
+            for (int i = 0; i < motions.Count; i++)
             {
+                var motion = motions[i];
+                
                 if (first)
                 {
                     first = false;
@@ -48,10 +53,11 @@
                 {
                     <hr/>
                 }
+                
                 <div id="m-@motion.Id">
                     @{
                         // Initially just render all motions.
-                        await Html.RenderPartialAsync("_Motion", motion);
+                        await Html.RenderPartialAsync("_Motion", Tuple.Create(motions, i));
                     }
                 </div>
             }
@@ -272,12 +278,12 @@
                 type: "GET",
                 url: "/Admin/?handler=EditAtt",
                 data: {
-                    "AttId": attId
+                    "attId": attId
                 },
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     if (result) {
-                        $("#a-" + motionId + "-" + attId).html(result);
+                        $("#a-" + attId).html(result);
                         editing = true;
                     } else {
                         $(button).html(oldButtonHtml);
@@ -288,7 +294,11 @@
             });
         }
         
-        function addAtt(button, motionId, additionalAtt) {
+        /// attType:
+        ///     0: Att-sats
+        ///     1: Tilläggsyrkande
+        ///     2: PS att-sats
+        function addAtt(button, motionId, attType) {
             if (editing) {
                 alert("Du kan bara redigera en sak åt gången");
                 return;
@@ -304,19 +314,24 @@
                 url: "/Admin/Index?handler=AddAtt",
                 data: {
                     "motionId": motionId,
-                    "additionalAtt": additionalAtt
+                    "attType": attType
                 },
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     editing = true;
-                    $("#newAttDiv-" + motionId).html(result);
+                    if (attType == 2) {
+                        // We know that the motion id passed is the same as for the actual ps att list div id.
+                        $("#newPsAttDiv-" + motionId).html(result);
+                    } else {
+                        $("#newAttDiv-" + motionId).html(result);
+                    }
                 }, error: function() {
                     $(button).html(oldButtonHtml);
                 }
             });
         }
         
-        function cancelAddAtt(button, motionId) {
+        function cancelAddAtt(button, motionId, attType) {
             // Spin the button immediately.
             var oldButtonHtml = $(button).html();
             $(button).html(buttonSpinner);
@@ -326,12 +341,17 @@
                 type: "GET",
                 url: "/Admin/Index?handler=CancelAddAtt",
                 data: {
-                    "motionId": motionId
+                    "motionId": motionId,
+                    "attType": attType
                 },
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     editing = false;
-                    $("#newAttDiv-" + motionId).html(result);
+                    if (attType == 2) {
+                        $("#newPsAttDiv-" + motionId).html(result);
+                    } else {
+                        $("#newAttDiv-" + motionId).html(result);
+                    }
                 }, error: function() {
                     $(button).html(oldButtonHtml);
                 }

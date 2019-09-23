@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CsAspnet.Models.dbcontext;
 using CsAspnet.Models.Tools;
@@ -44,15 +45,18 @@ namespace CsAspnet.Pages.Kommitteer
 
         public async Task<IActionResult> OnGetLoadMotionAsync(int motionId)
         {
-            var motion = await _context.Motion
-                .Include(m => m.Committee)
-                .Include(m => m.Att)
-                .FirstOrDefaultAsync(m => m.Id == motionId);
-
+            var motion = await _context.Motion.FindAsync(motionId);
+            var committee = await _context.Committee
+                .Include(c => c.Motion)
+                .ThenInclude(m => m.Att)
+                .FirstOrDefaultAsync(c => c.Id == motion.CommitteeId);
+            var motionList = committee.Motion.OrderBy(m => m.MotionNumber).ToList();
+            var motionIndex = motionList.FindIndex(m => m.Id == motionId);
+            
             if (motion == null)
                 return new JsonResult(false);
             
-            return ViewTools.GetPartialView("_Motion", motion);
+            return ViewTools.GetPartialView("_Motion", Tuple.Create(motionList, motionIndex));
         }
     }
 }
