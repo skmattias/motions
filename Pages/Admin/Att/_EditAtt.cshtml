@@ -8,12 +8,8 @@
             // Tilläggsyrkande.
             col = "8";
             <div class="form-group half-form-input col-4">
-                <select class="form-control" type="text" value="" id="editAdditionalAttAuthor">
-                    <option value="PS">PS</option>
-                    <option value="CUF">CUF</option>
-                    <option value="CS">CS</option>
-                    <option value="K">Kommittén</option>
-                </select>
+                <input class="form-control" type="text" placeholder="Avsändare" id="editAdditionalAttAuthor"
+                       value="@Model.Author"/>
             </div>
             
             // Hidden input for the ajax post.
@@ -28,7 +24,7 @@
             </div>
 
             // Hidden input for the ajax post.
-            <select id="editAdditionalAttAuthor" hidden><option value="" selected></option></select>
+            <input id="additionalAttAuthor" value="" hidden/>
         }
     }
     
@@ -97,7 +93,7 @@
                 "Text": $("#editAttText").val(),
                 "VoteSuggestion": $("#editVoteSuggestion option:selected").val(),
                 "MainProposal": $("#editAttMainProposal option:selected").val(),
-                "AdditionalAttAuthor": $("#editAdditionalAttAuthor option:selected").val()
+                "AdditionalAttAuthor": $("#editAdditionalAttAuthor").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
@@ -126,11 +122,6 @@
         $("#editAttMainProposal select").val(mainProposal);
         $("#editAttMainProposal").val(mainProposal).change();
         
-        // Select the correct authour.
-        var author = "@Model.Author";
-        $("#editAdditionalAttAuthor select").val(author);
-        $("#editAdditionalAttAuthor").val(author).change();
-
         autoResize(document.getElementById("editAttText"));
     });
 

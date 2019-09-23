@@ -14,12 +14,7 @@
             // Tilläggsyrkande.
             col = "8";
             <div class="form-group half-form-input col-4">
-                <select class="form-control" type="text" value="" id="additionalAttAuthor">
-                    <option value="PS">PS</option>
-                    <option value="CUF">CUF</option>
-                    <option value="CS">CS</option>
-                    <option value="K">Kommittén</option>
-                </select>
+                <input class="form-control" type="text" placeholder="Avsändare" id="additionalAttAuthor"/>
             </div>
             
             // Hidden input for the ajax post.
@@ -35,7 +30,7 @@
             </div>
             
             // Hidden input for the ajax post.
-            <select id="additionalAttAuthor" hidden><option value="" selected></option></select>
+            <input id="additionalAttAuthor" value="" hidden/>
         }
     }
     
@@ -103,7 +98,7 @@
                 "Text": $("#newAttText").val(),
                 "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val(),
                 "MainProposal": $("#newAttMainProposal option:selected").val(),
-                "AdditionalAttAuthor": $("#additionalAttAuthor option:selected").val()
+                "AdditionalAttAuthor": $("#additionalAttAuthor").val()
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
