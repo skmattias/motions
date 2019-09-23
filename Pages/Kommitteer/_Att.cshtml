@@ -17,48 +17,77 @@
             suggestion += "Centerstudenter föreslår att instämma i motionens intentioner";
             break;
     }
-    
+
     string md1 = "", md2 = "";
     if (!User.Identity.IsAuthenticated)
     {
         md1 = "col-md-3";
         md2 = "col-md-9";
     }
+
+    // HTML:
+    if (Model.IsPsAtt())
+    {
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.Author))
+    {
+        // Tilläggsyrkande.
+        <dl class="row" style="margin-bottom: 0;">
+            <dt class="col-12 lato-bold">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
+                        <i class="mdi mdi-edit"></i>
+                    </button>
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
+                            data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?"
+                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                }
+
+                <p class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+                   style="display: inline-block; margin-bottom: 0;">
+                    @Model.Author
+                </p>
+            </dt>
+        </dl>
+        <dl class="row" style="margin-bottom: 0; margin-top: 0;">
+            <dt class="col-2 lato-bold">
+                <text>Att:</text>
+            </dt>
+            <dd class="col-10">@Model.AttText</dd>
+        </dl>
+    }
+    else
+    {
+        // Att-sats.
+        <dl class="row" style="margin-bottom: 0;">
+            <dt class="col-xs-6 col-sm-4 @md1 col-lg-3 half-form-input lato-bold">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
+                        <i class="mdi mdi-edit"></i>
+                    </button>
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
+                            data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?"
+                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                }
+
+                <p class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+                   style="display: inline-block; width: 70px;">
+                    @Model.FullNumber()
+                </p> <text>Att:</text>
+            </dt>
+            <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>
+        </dl>
+    }
 }
 
-
-<dl class="row" style="margin-bottom: 0;">
-<dt class="col-xs-6 col-sm-4 @md1 col-lg-3 half-form-input lato-bold">
-    @if (User.Identity.IsAuthenticated)
-    {
-        <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
-            <i class="mdi mdi-edit"></i>
-        </button>
-        @Html.AntiForgeryToken()
-        <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
-                data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?" 
-                data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
-            <i class="mdi mdi-delete"></i>
-        </button>
-    }
-    @{
-        string author = string.IsNullOrWhiteSpace(Model.Author) ? Model.FullNumber() : Model.Author;
-        if (Model.IsPsAtt())
-        {
-            author = "";
-        }
-        else
-        {
-            author += ":";
-        }
-    }
-    <text class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
-          style="display: inline-block; width: 70px;">
-        @author
-    </text> Att
-</dt>
-<dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>
-</dl>
 
 <script type="text/javascript">
 
