@@ -86,7 +86,7 @@
 
     function addNewAtt(button, motionId, attType) {
         
-        if (!($("#additionalAttAuthor").val().trim())) {
+        if ((attType == 1 || attType == 4) && !($("#additionalAttAuthor").val().trim())) {
             alert("Ange avsändare för yrkandet");
             return;
         }
