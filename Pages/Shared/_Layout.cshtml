@@ -13,13 +13,13 @@
     <link rel="stylesheet" href="~/scss/custom.css"/>
     <link rel="stylesheet" href="~/node_modules/bootstrap-material-design-icons/css/material-icons.css"/>
     <link rel="stylesheet" href="~/css/styles.css"/>
-    
+
     @* Custom fonts *@
     <link rel="stylesheet" href="~/fonts/stylesheet.css" type="text/css"/>
 </head>
 
 <body data-spy="scroll" data-target="#motions" style="position: relative" class="lato-regular">
-<div class="main-container">
+<div class="main-container" id="mainContainer">
     @{
         string expand = User.Identity.IsAuthenticated ? "navbar-expand-md" : "navbar-expand-sm";
     }
@@ -85,15 +85,42 @@
         @RenderBody()
         <br/>
     </div>
-    
+
     @* For detecting screen size *@
     <div class="device-xs d-block d-sm-none"></div>
     <div class="device-sm d-none d-sm-block"></div>
     <div class="device-md d-none d-md-block"></div>
     <div class="device-lg d-none d-lg-block"></div>
-    
-    <footer class="mt-auto py-3 text-center bg-light">
-        <img src="~/images/sanning.png" style="height: 200px;" alt=""/>
+
+    <footer class="mt-auto py-3 text-center bg-light" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-4">
+                    <h4>Kontakt</h4>
+                    <div class="textwidget">
+                        <strong>Besöksadress:</strong> Stora Nygatan 4, Gamla stan, Stockholm
+                        <br>
+                        <strong>Postadress:</strong> Centerstudenter, Stora Nygatan 4, <br>Box 2200, 103 15 Stockholm.
+                        <br>
+                        <strong>E-post:</strong> <a href="mailto:centerstudenter@centerpartiet.se">centerstudenter@centerpartiet.se</a>
+                        <br>
+                        <strong>Telefon generalsekreterare:</strong> 08-617 38 49
+                        <br><br>
+                    </div>
+                </div>
+                <div class="d-none d-md-block col-md-4">
+                    <img src="~/images/sanning.png" style="height: 200px;" alt=""/>
+                </div>
+                <div class="col-xs-12 col-md-4">
+                    <h4>Om Centerstudenter</h4>
+                    <div class="textwidget">Centerstudenter är Centerpartiets fristående studentförbund. Vår politik vilar på en grön liberal grund. Det innebär att vi arbetar för ett friare, mer hållbart och mer öppet samhälle där individen är viktigare än systemet.</div>
+                </div>
+                <div class="col-12 d-md-none" style="padding-top: 2rem;">
+                    <img src="~/images/sanning.png" style="height: 200px;" alt=""/>
+                </div>
+            </div>
+        </div>
+        
     </footer>
 </div>
 
@@ -289,6 +316,11 @@
         document.execCommand("copy");
     }
     
+    function setMainPadding() {
+        var pad = ($("#footer").height() + 32).toString() + "px";
+        $("#mainContainer").css({"padding-bottom": pad});
+    }
+    
     $(document).ready(function() {
         // General delete modal usage:
         //  data-toggle="modal" data-target="#generalDeleteModal" data-title="My modal title!"
@@ -307,6 +339,11 @@
         // Stop spinning the button on hide.
         deleteModal.on("hidden.bs.modal", function() {
             $("#generalDeleteModalDeleteButton").html("Radera");
+        });
+        
+        setMainPadding();
+        $(window).on('resize', function() {
+            setMainPadding();
         });
     });
 

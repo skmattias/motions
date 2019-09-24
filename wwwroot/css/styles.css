@@ -16,7 +16,7 @@ html, body {
     min-height: 100vh;
     display: block;
     position: relative;
-    padding-bottom: 232px; /* Exact height of the footer */
+    /*padding-bottom: 350px; !* Exact height of the footer *!*/
 }
 
 footer {
