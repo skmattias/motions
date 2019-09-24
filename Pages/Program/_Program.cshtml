@@ -2,10 +2,17 @@
 
 <div class="row">
     <div class="col-12">
-        <h1 class="lato-bold text-center">Program @Model.ProgramNumber </h1>
+        @if (Model.Section.Any(s => s.Title == Model.ProgramTitle))
+        {
+            <h1 class="lato-bold text-center">Program @Model.ProgramNumber </h1>
+        }
+        else
+        {
+            <h1 class="lato-bold text-center">Program @Model.ProgramNumber: @Model.ProgramTitle </h1>
+        }
         @if (Model.Section.Any())
         {
-            <a class="lato-bold header-collapse-link btn btn-link" data-toggle="collapse" data-target="#program-text-@Model.Id" 
+            <a class="lato-bold header-collapse-link btn btn-link" data-toggle="collapse" data-target="#program-text-@Model.Id"
                onclick="toggleCollapseLink(this, 'programtext:', 'program-text-@Model.Id');">
                 <i class="mdi mdi-keyboard-arrow-down" style="z-index: -1;"></i>&nbsp;Dölj programtext
             </a>
