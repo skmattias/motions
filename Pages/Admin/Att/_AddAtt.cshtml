@@ -86,6 +86,11 @@
 
     function addNewAtt(button, motionId, attType) {
         
+        if (!($("#additionalAttAuthor").val().trim())) {
+            alert("Ange avsändare för yrkandet");
+            return;
+        }
+        
         // Spin the button immediately.
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
