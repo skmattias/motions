@@ -1,10 +1,10 @@
 @page "{id:int}"
 @model IndexModel
 @{
-    ViewData["Title"] = Model.Committee.CommitteeNumber + ": " + Model.Committee.CommitteeName;
+    ViewData["Title"] = "Program " + Model.Program.ProgramNumber;
 }
 
-<div id="committee">
+<div id="programDiv">
     <div class="row justify-content-center">
         <div class="spinner-border"></div>
     </div>
@@ -12,27 +12,27 @@
 
 <script type="text/javascript">
 
-    function loadMotions() {
+    function loadProgram() {
         $.ajax({
             type: "GET",
-            url: "/Kommitteer/@Model.Committee.CommitteeNumber?handler=Committee",
+            url: "/Program/@Model.Program.ProgramNumber?handler=LoadProgram",
             data: {
-                "committeeId": @Model.Committee.Id
+                "programId": @Model.Program.Id
             },
             contentType: 'application/json; charset=utf-8"',
             success: function (result) {
                 if (result) {
                     editing = false;
-                    $("#committee").html(result);
+                    $("#programDiv").html(result);
                 } else {
-                    location.href = "/Kommitteer/@Model.Committee.CommitteeNumber"
+                    location.href = "/Program/@Model.Program.ProgramNumber"
                 }
             }
         });
     }
     
     window.onload = function() {
-        loadMotions();
+        loadProgram();
     };
 
 </script>

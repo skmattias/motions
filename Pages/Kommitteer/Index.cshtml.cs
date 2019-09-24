@@ -26,6 +26,9 @@ namespace CsAspnet.Pages.Kommitteer
 
             Committee = await _context.Committee
                 .FirstOrDefaultAsync(c => c.CommitteeNumber == id);
+
+            if (Committee == null)
+                return NotFound();
             
             return Page();
         }

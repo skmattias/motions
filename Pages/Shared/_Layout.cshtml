@@ -41,11 +41,25 @@
                         Kommittéer
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
-                        @foreach (var c in DatabaseContext.Committee.ToList())
+                        @foreach (var c in DatabaseContext.Committee.OrderBy(c => c.CommitteeNumber).ToList())
                         {
                             <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber"
                                style="white-space: normal">
-                                @c.FullName()
+                                <b class="lato-bold">@c.CommitteeNumber</b>: @c.CommitteeName
+                            </a>
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        Program
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
+                        @foreach (var p in DatabaseContext.Program.OrderBy(p => p.ProgramNumber).ToList())
+                        {
+                            <a class="dropdown-item" asp-page="/Program/Index" asp-route-id="@p.ProgramNumber"
+                               style="white-space: normal">
+                                <b class="lato-bold">@p.ProgramNumber</b>: @p.ProgramTitle
                             </a>
                         }
                     </div>
@@ -297,6 +311,159 @@
     });
 
 </script>
+
+<script type="text/javascript">
+
+    //
+    // Vars:
+    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
+    var editing = false;
+
+</script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        //
+        // Att functions:
+        
+        function editAtt(button, attId) {
+            if (editing) {
+                alert("Du kan bara redigera en sak åt gången");
+                return;
+            }
+            
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the edit motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/?handler=EditAtt",
+                data: {
+                    "attId": attId
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    if (result) {
+                        editing = true;
+                        $("#a-" + attId).html(result);
+                    } else {
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        /// attType:
+        ///     0: Att-sats
+        ///     1: Tilläggsyrkande
+        ///     2: PS att-sats
+        ///     3: Program-att
+        ///     4: Program-tilläggsyrkande
+        function addAtt(button, motionId, attType) {
+            if (editing) {
+                alert("Du kan bara redigera en sak åt gången");
+                return;
+            }
+            
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Index?handler=AddAtt",
+                data: {
+                    "motionId": motionId,
+                    "attType": attType
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    editing = true;
+                    if (attType == 2) {
+                        // We know that the motion id passed is the same as for the actual ps att list div id.
+                        $("#newPsAttDiv-" + motionId).html(result);
+                    } else if (attType == 3 || attType == 4) {
+                        // Program att.
+                        $("#newProgramAttDiv-" + motionId).html(result);
+                    } else {
+                        $("#newAttDiv-" + motionId).html(result);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function cancelAddAtt(button, motionId, attType) {
+            // Spin the button immediately.
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner);
+            
+            // Get the add motion-html.
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Index?handler=CancelAddAtt",
+                data: {
+                    "motionId": motionId,
+                    "attType": attType
+                },
+                contentType: 'application/json; charset=utf-8"',
+                success: function (result) {
+                    editing = false;
+                    if (attType == 2) {
+                        $("#newPsAttDiv-" + motionId).html(result);
+                    } else if (attType == 3 || attType == 4) {
+                        $("#newProgramAttDiv-" + motionId).html(result);
+                    } else {
+                        $("#newAttDiv-" + motionId).html(result);
+                    }
+                }, error: function() {
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+        
+        function deleteAtt(button, attId, isProgramAtt) {
+            var oldButtonHtml = $(button).html();
+            $(button).html(buttonSpinner + oldButtonHtml);
+            
+            $.ajax({
+                traditional: true,
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: "/Admin/Index?handler=DeleteAtt",
+                data: JSON.stringify(attId),
+                contentType: 'application/json; charset=utf-8"',
+                success: function(result) {
+                    if (result.result) {
+                        if (isProgramAtt) {
+                            loadProgram();
+                        } else {
+                            loadMotions();
+                        }
+                        $("#generalDeleteModal").modal("hide");
+                    } else {
+                        alert(result.message);
+                        $(button).html(oldButtonHtml);
+                    }
+                }, error: function() {
+                    alert("Okänt fel, prova att ladda om sidan");
+                    $(button).html(oldButtonHtml);
+                }
+            });
+        }
+    
+    </script>
+}
 
 @RenderSection("Scripts", required: false)
 </body>

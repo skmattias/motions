@@ -3,22 +3,22 @@
 <div class="card shadow-sm">
     <div class="card-body link-card" onclick="location.href='/Kommitteer/@Model.CommitteeNumber'">
         <h5 class="card-title lato-bold">
-            @Model.FullName()
+            Kommitté @Model.FullName()
         </h5>
-        @foreach (var p in Model.Description.Split('\n'))
-        {
-            <p>@p</p>
-        }
+@*         @foreach (var p in Model.Description.Split('\n')) *@
+@*         { *@
+@*             <p>@p</p> *@
+@*         } *@
     </div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                <button class="btn btn-link inline-btn-link" onclick="editCommittee(this, @Model.Id)">
-                    <i class="mdi mdi-edit"></i>
-                </button>
-            </li>
-        </ul>
-    }
+@*     @if (User.Identity.IsAuthenticated) *@
+@*     { *@
+@*         <ul class="list-group list-group-flush"> *@
+@*             <li class="list-group-item"> *@
+@*                 <button class="btn btn-link inline-btn-link" onclick="editCommittee(this, @Model.Id)"> *@
+@*                     <i class="mdi mdi-edit"></i> *@
+@*                 </button> *@
+@*             </li> *@
+@*         </ul> *@
+@*     } *@
 </div>
 <br/>

@@ -18,6 +18,8 @@ namespace CsAspnet.Models.dbcontext
         public virtual DbSet<Att> Att { get; set; }
         public virtual DbSet<Committee> Committee { get; set; }
         public virtual DbSet<Motion> Motion { get; set; }
+        public virtual DbSet<Program> Program { get; set; }
+        public virtual DbSet<Section> Section { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +29,9 @@ namespace CsAspnet.Models.dbcontext
 
                 entity.HasIndex(e => e.MotionId)
                     .HasName("att_proposition_motion_id_fk");
+
+                entity.HasIndex(e => e.ProgramId)
+                    .HasName("att_program_id_fk");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -54,6 +59,10 @@ namespace CsAspnet.Models.dbcontext
                     .HasColumnName("motion_id")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.ProgramId)
+                    .HasColumnName("program_id")
+                    .HasColumnType("int(11)");
+
                 entity.Property(e => e.SuggestedVote)
                     .HasColumnName("suggested_vote")
                     .HasMaxLength(6)
@@ -62,7 +71,14 @@ namespace CsAspnet.Models.dbcontext
                 entity.HasOne(d => d.Motion)
                     .WithMany(p => p.Att)
                     .HasForeignKey(d => d.MotionId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("att_proposition_motion_id_fk");
+
+                entity.HasOne(d => d.Program)
+                    .WithMany(p => p.Att)
+                    .HasForeignKey(d => d.ProgramId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("att_program_id_fk");
             });
 
             modelBuilder.Entity<Committee>(entity =>
@@ -124,6 +140,61 @@ namespace CsAspnet.Models.dbcontext
                     .WithMany(p => p.Motion)
                     .HasForeignKey(d => d.CommitteeId)
                     .HasConstraintName("motion_committee_id_fk");
+            });
+
+            modelBuilder.Entity<Program>(entity =>
+            {
+                entity.ToTable("program", "motions");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ProgramNumber)
+                    .HasColumnName("program_number")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ProgramTitle)
+                    .HasColumnName("program_title")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Section>(entity =>
+            {
+                entity.ToTable("section", "motions");
+
+                entity.HasIndex(e => e.ProgramId)
+                    .HasName("section_program_id_fk");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.BodyText)
+                    .HasColumnName("body_text")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Placement)
+                    .HasColumnName("placement")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ProgramId)
+                    .HasColumnName("program_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasColumnName("title")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TitleLevel)
+                    .HasColumnName("title_level")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Program)
+                    .WithMany(p => p.Section)
+                    .HasForeignKey(d => d.ProgramId)
+                    .HasConstraintName("section_program_id_fk");
             });
         }
     }

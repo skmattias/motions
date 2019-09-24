@@ -40,7 +40,6 @@
         @{
             bool first = true;
             var motions = Model.Motion.OrderBy(m => m.MotionNumber).ToList();
-            // TODO lista med ps-att-satser, fyll på om vi hittar id 999, printa sist.
             for (int i = 0; i < motions.Count; i++)
             {
                 var motion = motions[i];
@@ -96,11 +95,6 @@
 <script type="text/javascript">
 
     //
-    // Vars:
-    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    var editing = false;
-    
-    //
     // Functions:
     function loadMotion(button, motionId) {
         var oldButtonHtml = $(button).html();
@@ -114,6 +108,7 @@
             contentType: 'application/json; charset=utf-8"',
             success: function (result) {
                 if (result) {
+                    editing = false;
                     $("#m-" + motionId).html(result);
                 } else {
                     $(button).html(oldButtonHtml);
@@ -165,9 +160,7 @@
                 alert("Du kan bara redigera en sak åt gången");
                 return;
             }
-            
-            editing = true;
-            
+                        
             // Spin the button immediately.
             var oldButtonHtml = $(button).html();
             $(button).html(buttonSpinner);
@@ -182,6 +175,7 @@
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     if (result) {
+                        editing = true;
                         $("#m-" + motionId).html(result);
                     } else {
                         $(button).html(oldButtonHtml);
@@ -224,6 +218,7 @@
                 url: "/Admin/Index?handler=CancelAddMotion",
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
+                    editing = false;
                     $("#newMotionDiv").html(result);
                 }, error: function() {
                     $(button).html(oldButtonHtml);
@@ -244,133 +239,6 @@
                 },
                 url: "/Admin/Index?handler=DeleteMotion",
                 data: JSON.stringify(motionId),
-                contentType: 'application/json; charset=utf-8"',
-                success: function(result) {
-                    if (result.result) {
-                        loadMotions();
-                        $("#generalDeleteModal").modal("hide");
-                    } else {
-                        alert(result.message);
-                        $(button).html(oldButtonHtml);
-                    }
-                }, error: function() {
-                    alert("Okänt fel, prova att ladda om sidan");
-                    $(button).html(oldButtonHtml);
-                }
-            });
-        }
-        
-        //
-        // Att functions:
-        
-        function editAtt(button, motionId, attId) {
-            if (editing) {
-                alert("Du kan bara redigera en sak åt gången");
-                return;
-            }
-            
-            // Spin the button immediately.
-            var oldButtonHtml = $(button).html();
-            $(button).html(buttonSpinner);
-            
-            // Get the edit motion-html.
-            $.ajax({
-                type: "GET",
-                url: "/Admin/?handler=EditAtt",
-                data: {
-                    "attId": attId
-                },
-                contentType: 'application/json; charset=utf-8"',
-                success: function (result) {
-                    if (result) {
-                        $("#a-" + attId).html(result);
-                        editing = true;
-                    } else {
-                        $(button).html(oldButtonHtml);
-                    }
-                }, error: function() {
-                    $(button).html(oldButtonHtml);
-                }
-            });
-        }
-        
-        /// attType:
-        ///     0: Att-sats
-        ///     1: Tilläggsyrkande
-        ///     2: PS att-sats
-        function addAtt(button, motionId, attType) {
-            if (editing) {
-                alert("Du kan bara redigera en sak åt gången");
-                return;
-            }
-            
-            // Spin the button immediately.
-            var oldButtonHtml = $(button).html();
-            $(button).html(buttonSpinner);
-            
-            // Get the add motion-html.
-            $.ajax({
-                type: "GET",
-                url: "/Admin/Index?handler=AddAtt",
-                data: {
-                    "motionId": motionId,
-                    "attType": attType
-                },
-                contentType: 'application/json; charset=utf-8"',
-                success: function (result) {
-                    editing = true;
-                    if (attType == 2) {
-                        // We know that the motion id passed is the same as for the actual ps att list div id.
-                        $("#newPsAttDiv-" + motionId).html(result);
-                    } else {
-                        $("#newAttDiv-" + motionId).html(result);
-                    }
-                }, error: function() {
-                    $(button).html(oldButtonHtml);
-                }
-            });
-        }
-        
-        function cancelAddAtt(button, motionId, attType) {
-            // Spin the button immediately.
-            var oldButtonHtml = $(button).html();
-            $(button).html(buttonSpinner);
-            
-            // Get the add motion-html.
-            $.ajax({
-                type: "GET",
-                url: "/Admin/Index?handler=CancelAddAtt",
-                data: {
-                    "motionId": motionId,
-                    "attType": attType
-                },
-                contentType: 'application/json; charset=utf-8"',
-                success: function (result) {
-                    editing = false;
-                    if (attType == 2) {
-                        $("#newPsAttDiv-" + motionId).html(result);
-                    } else {
-                        $("#newAttDiv-" + motionId).html(result);
-                    }
-                }, error: function() {
-                    $(button).html(oldButtonHtml);
-                }
-            });
-        }
-        
-        function deleteAtt(button, attId) {
-            var oldButtonHtml = $(button).html();
-            $(button).html(buttonSpinner + oldButtonHtml);
-            
-            $.ajax({
-                traditional: true,
-                type: "POST",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                url: "/Admin/Index?handler=DeleteAtt",
-                data: JSON.stringify(attId),
                 contentType: 'application/json; charset=utf-8"',
                 success: function(result) {
                     if (result.result) {

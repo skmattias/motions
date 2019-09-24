@@ -78,6 +78,12 @@
                     Avbryt
                 </button>
             }
+            else if (Model.ProgramId.HasValue)
+            {
+                <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadProgram();">
+                    Avbryt
+                </button>
+            }
             else
             {
                 <button class="btn btn-secondary" style="margin-right: 0.5em;" onclick="loadMotion(this, @Model.Motion.Id);">
@@ -102,10 +108,10 @@
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
         
-        // Invert to ps agrees.
-        var psAgrees = true;
-        if ($("#editVoteSuggestionAgainstPs").prop("checked") == true) {
-            psAgrees = false;
+        var isProgramAtt = false;
+        @if (Model.ProgramId.HasValue)
+        {
+            @:isProgramAtt = true;
         }
         
         // Save the motion.
@@ -124,20 +130,25 @@
                 "Text": $("#editAttText").val(),
                 "VoteSuggestion": $("#editVoteSuggestion option:selected").val(),
                 "MainProposal": $("#editAttMainProposal option:selected").val(),
-                "AdditionalAttAuthor": $("#editAdditionalAttAuthor").val()
+                "AdditionalAttAuthor": $("#editAdditionalAttAuthor").val(),
+                "IsProgramAtt": isProgramAtt
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
+                    editing = false;
                     @if (attType == 2)
                     {
                         @:loadMotions();
+                    }
+                    else if (Model.ProgramId.HasValue)
+                    {
+                        @:loadProgram();
                     }
                     else
                     {
                         @:loadMotion(null, @Model.Motion.Id);
                     }
-                    editing = false;
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);

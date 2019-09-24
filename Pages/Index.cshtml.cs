@@ -15,6 +15,7 @@ namespace CsAspnet.Pages
         private readonly motionsContext _context;
         
         public List<Committee> Committees { get; set; }
+        public List<Models.dbcontext.Program> Programs { get; set; }
         
         public IndexModel(motionsContext context)
         {
@@ -24,6 +25,7 @@ namespace CsAspnet.Pages
         public async Task<IActionResult> OnGetAsync()
         {
             Committees = await _context.Committee.ToListAsync();
+            Programs = await _context.Program.ToListAsync();
             return Page();
         }
 

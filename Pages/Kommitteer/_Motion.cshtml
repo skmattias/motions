@@ -77,7 +77,7 @@
 
     if (newAtts.Any())
     {
-        <h5 class="lato-bold" style="padding-top: 1rem;">Tilläggsyrkanden:</h5>
+        <h5 class="lato-bold" style="padding-top: 1rem;">Yrkanden:</h5>
         foreach (var att in newAtts)
         {
             <div id="a-@att.Id">
@@ -91,7 +91,7 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    await Html.RenderPartialAsync("Admin/Att/_AddAttButton", motion.Id);
+    await Html.RenderPartialAsync("Admin/Att/_AddAttButton", Tuple.Create(motion.Id, false));
 }
 
 @{

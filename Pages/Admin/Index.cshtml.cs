@@ -275,24 +275,48 @@ namespace CsAspnet.Pages.Admin
         /// 
         /// </summary>
         /// <param name="motionId"></param>
-        /// <param name="attType">0: att-sats, 1: tilläggsyrkande, 2: ps att-sats</param>
+        /// <param name="attType">
+        /// 0: Att-sats,
+        /// 1: Tilläggsyrkande,
+        /// 2: PS att-sats
+        /// 3: Program-att
+        /// 4: Program-tilläggsyrkande
+        /// </param>
         /// <returns></returns>
         public async Task<IActionResult> OnGetAddAttAsync(int motionId, int attType)
         {
             int nextNumber = 1;
-            var lastAtt = await _context.Att
-                .Where(a => a.MotionId == motionId)
-                .LastOrDefaultAsync();
 
-            if (lastAtt != null)
-                nextNumber = lastAtt.AttNumber + 1;
+            // If this is a program att.
+            if (attType == 3 || attType == 4)
+            {
+                var lastAtt = await _context.Att
+                    .Where(a => a.ProgramId == motionId)
+                    .LastOrDefaultAsync();
+
+                if (lastAtt != null)
+                    nextNumber = lastAtt.AttNumber + 1;
+            }
+            else
+            {
+                var lastAtt = await _context.Att
+                    .Where(a => a.MotionId == motionId)
+                    .LastOrDefaultAsync();
+
+                if (lastAtt != null)
+                    nextNumber = lastAtt.AttNumber + 1;
+            }
             
             return ViewTools.GetPartialView("Att/_AddAtt", Tuple.Create(motionId, nextNumber, attType));
         }
 
         public IActionResult OnGetCancelAddAtt(int motionId, int attType)
         {
-            return ViewTools.GetPartialView(attType == 2 ? "Att/_AddPsAttButton" : "Att/_AddAttButton", motionId);
+            if (attType == 2)
+                return ViewTools.GetPartialView("Att/_AddPsAttButton", motionId);
+            else
+                return ViewTools.GetPartialView("Att/_AddAttButton", 
+                    Tuple.Create(motionId, (attType == 3 || attType == 4)));
         }
         
         public class SaveAttPostData
@@ -300,12 +324,13 @@ namespace CsAspnet.Pages.Admin
             // Att id if an existing att is being edited.
             public int AttId;
             // Motion id if a new att is being added.
-            public int MotionId;
+            public int MotionId; // Or program number, if IsProgramAtt.
             public int? Number;
             public string Text;
             public string VoteSuggestion;
             public string MainProposal;
             public string AdditionalAttAuthor;
+            public bool IsProgramAtt;
         }
         public async Task<IActionResult> OnPostSaveAttAsync([FromBody] SaveAttPostData data)
         {
@@ -339,24 +364,40 @@ namespace CsAspnet.Pages.Admin
                 // Create a new att.
                 if (data.AttId == 0)
                 {
-                    // Get the motion.
-                    var motion = await _context.Motion.FindAsync(data.MotionId);
-                    if (motion == null)
-                        return new JsonResult(new
-                        {
-                            Result = false,
-                            Message = "Motionen hittades inte i databasen. Prova att ladda on sidan."
-                        });
-                    
                     att = new Att
                     {
                         AttNumber = data.Number.Value,
                         AttText = data.Text,
-                        Motion = motion,
                         SuggestedVote = data.VoteSuggestion,
                         MainProposal = data.MainProposal,
                         Author = data.AdditionalAttAuthor
                     };
+                    
+                    if (data.IsProgramAtt)
+                    {
+                        var program = await _context.Program.FindAsync(data.MotionId);
+                        if (program == null)
+                            return new JsonResult(new
+                            {
+                                Result = false,
+                                Message = "Programmet hittades inte i databasen. Prova att ladda on sidan."
+                            });
+
+                        att.Program = program;
+                    }
+                    else
+                    {
+                        // Get the motion.
+                        var motion = await _context.Motion.FindAsync(data.MotionId);
+                        if (motion == null)
+                            return new JsonResult(new
+                            {
+                                Result = false,
+                                Message = "Motionen hittades inte i databasen. Prova att ladda on sidan."
+                            });
+
+                        att.Motion = motion;
+                    }
 
                     await _context.Att.AddAsync(att);
                 }
@@ -364,10 +405,7 @@ namespace CsAspnet.Pages.Admin
                 else
                 {
                     // Get the att proposition.
-                    att = await _context.Att
-                        .Include(a => a.Motion)
-                        .ThenInclude(m => m.Committee)
-                        .FirstOrDefaultAsync(a => a.Id == data.AttId);
+                    att = await _context.Att.FindAsync(data.AttId);
 
                     // Check for datbase errors.
                     if (att == null)

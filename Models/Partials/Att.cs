@@ -5,6 +5,9 @@ namespace CsAspnet.Models.dbcontext
     {
         public string FullNumber()
         {
+            if (ProgramId.HasValue)
+                return AttNumber.ToString();
+                
             return IsPsAtt() ? "" : string.Join('.', Motion.FullNumber(), AttNumber);
         }
 

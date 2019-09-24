@@ -1,0 +1,10 @@
+@model CsAspnet.Models.dbcontext.Program
+
+<div class="card shadow-sm">
+    <div class="card-body link-card" onclick="location.href='/Program/@Model.ProgramNumber'">
+        <h5 class="card-title lato-bold">
+            Program @Model.ProgramNumber: @Model.ProgramTitle
+        </h5>
+    </div>
+</div>
+<br/>

@@ -1,19 +1,21 @@
 @* Model motionId, nextNumber *@
 @model Tuple<int, int, int>
 @{
-    int motionId = Model.Item1;
+    int motionId = Model.Item1; // or program id...
     int nextNumber = Model.Item2;
     int attType = Model.Item3;
     // 0: att-sats.
     // 1: tilläggsyrkande.
     // 2: ps att-sats.
+    // 3: program att.
+    // 4: program tilläggsyrkande.
 }
 
 <div class="row">
     @{
         string col;
         
-        if (attType == 1)
+        if (attType == 1 || attType == 4)
         {
             // Tilläggsyrkande.
             col = "8";
@@ -32,7 +34,7 @@
             <input id="newAttNumber" value="-1" hidden/>
             <input id="additionalAttAuthor" value="" hidden/>
         }
-        else // if attType == 0
+        else // if attType == 0 || attType == 3
         {
             // Att-sats.
             col = "10";
@@ -72,7 +74,7 @@
                 Avbryt
             </button>
             @Html.AntiForgeryToken()
-            <button class="btn btn-success" onclick="addNewAtt(this, @motionId)">
+            <button class="btn btn-success" onclick="addNewAtt(this, @motionId, @attType)">
                 Spara
             </button>
         </div>
@@ -82,17 +84,13 @@
 
 <script type="text/javascript">
 
-    function addNewAtt(button, motionId) {
+    function addNewAtt(button, motionId, attType) {
         
         // Spin the button immediately.
         var oldButtonHtml = $(button).html();
         $(button).html(buttonSpinner + oldButtonHtml);
         
-        // Invert to ps agrees.
-        var psAgrees = true;
-        if ($("#newAttVoteSuggestionAgainstPs").prop("checked") == true) {
-            psAgrees = false;
-        }
+        var isProgramAtt = attType == 3 || attType == 4;
         
         // Add the motion.
         $.ajax({
@@ -110,12 +108,17 @@
                 "Text": $("#newAttText").val(),
                 "VoteSuggestion": $("#newAttVoteSuggestion option:selected").val(),
                 "MainProposal": $("#newAttMainProposal option:selected").val(),
-                "AdditionalAttAuthor": $("#additionalAttAuthor").val()
+                "AdditionalAttAuthor": $("#additionalAttAuthor").val(),
+                "IsProgramAtt": isProgramAtt
             }),
             contentType: 'application/json; charset=utf-8"',
             success: function(result) {
                 if (result.result) {
-                    loadMotions();
+                    if (isProgramAtt) {
+                        loadProgram();
+                    } else {
+                        loadMotions();
+                    }
                 } else {
                     alert(result.message);
                     $(button).html(oldButtonHtml);
@@ -136,7 +139,7 @@
     }
     
     $(document).ready(function() {
-        $("#newAttNumber").focus();
+        $("#newAttText").focus();
         $("#newAttText").keyup();
         
         setFormPadding();

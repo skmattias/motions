@@ -1,12 +1,22 @@
 @* Model: motion id *@
-@model int
+@model Tuple<int, bool>
+@{
+    // Actually a program id if isProgram == true.
+    int motionId = Model.Item1;
+    bool isProgram = Model.Item2;
 
-<div id="newAttDiv-@Model">
-    <button class="btn btn-link" onclick="addAtt(this, @Model, 0)">
+    int attType1= isProgram ? 3 : 0;
+    int attType2 = isProgram ? 4 : 1;
+
+    string divId = (isProgram ? "newProgramAttDiv-" : "newAttDiv-") + motionId;
+}
+
+<div id="@divId">
+    <button class="btn btn-link" onclick="addAtt(this, @motionId, @attType1)">
         <i class="mdi mdi-add"></i> Ny att-sats
     </button>
     
-    <button class="btn btn-link" onclick="addAtt(this, @Model, 1)">
+    <button class="btn btn-link" onclick="addAtt(this, @motionId, @attType2)">
         <i class="mdi mdi-add"></i> Nytt tilläggsyrkande
     </button>
 </div>

@@ -61,6 +61,8 @@
         md2 = "col-md-9";
     }
 
+    string isProgramAtt = Model.ProgramId.HasValue ? "true" : "false";
+
     // HTML:
     if (Model.IsPsAtt())
     {
@@ -69,13 +71,13 @@
             <dt class="col-xs-6 col-sm-4 @md1 col-lg-3 half-form-input lato-bold">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
+                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Id)">
                         <i class="mdi mdi-edit"></i>
                     </button>
                     @Html.AntiForgeryToken()
                     <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
                             data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?"
-                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id, @isProgramAtt)">
                         <i class="mdi mdi-delete"></i>
                     </button>
                 }
@@ -103,13 +105,13 @@
             <dt class="col-12 lato-bold">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
+                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Id)">
                         <i class="mdi mdi-edit"></i>
                     </button>
                     @Html.AntiForgeryToken()
                     <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
                             data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?"
-                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id, @isProgramAtt)">
                         <i class="mdi mdi-delete"></i>
                     </button>
                 }
@@ -142,13 +144,13 @@
             <dt class="col-xs-6 col-sm-4 @md1 col-lg-3 half-form-input lato-bold">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Motion.Id, @Model.Id)">
+                    <button class="btn btn-link inline-btn-link" onclick="editAtt(this, @Model.Id)">
                         <i class="mdi mdi-edit"></i>
                     </button>
                     @Html.AntiForgeryToken()
                     <button class="btn btn-link inline-btn-link" data-toggle="modal" data-target="#generalDeleteModal"
                             data-title="Är du säker på att du vill ta bort att-sats @Model.FullNumber()?"
-                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id)">
+                            data-onclick="deleteAtt($('#generalDeleteModalDeleteButton'), @Model.Id, @isProgramAtt)">
                         <i class="mdi mdi-delete"></i>
                     </button>
                 }

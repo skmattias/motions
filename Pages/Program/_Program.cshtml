@@ -1,0 +1,76 @@
+@model CsAspnet.Models.dbcontext.Program
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="lato-bold text-center">Program @Model.ProgramNumber </h1>
+        @if (Model.Section.Any())
+        {
+            <a class="lato-bold header-collapse-link btn btn-link" data-toggle="collapse" data-target="#program-text-@Model.Id" 
+               onclick="toggleCollapseLink(this, 'programtext:', 'program-text-@Model.Id');">
+                <i class="mdi mdi-keyboard-arrow-down" style="z-index: -1;"></i>&nbsp;Dölj programtext
+            </a>
+            <div class="collapse show" id="program-text-@Model.Id">
+                @foreach (var s in Model.Section.OrderBy(s => s.Placement))
+                {
+                    var h = "h" + s.TitleLevel;
+                    <p class="@h lato-bold">
+                        @s.Title
+                    </p>
+                    if (!string.IsNullOrWhiteSpace(s.BodyText))
+                    {
+                        foreach (var b in s.BodyText.Split("\n"))
+                        {
+                            <p class="lato-regular">
+                                @b
+                            </p>
+                        }
+                    }
+                }
+            </div>
+        }
+    </div>
+    <div class="col-12">
+        @{
+            var atts = Model.Att
+                .Where(a => string.IsNullOrWhiteSpace(a.Author))
+                .OrderBy(a => a.AttNumber)
+                .ToList();
+
+            if (atts.Any())
+            {
+                <h5 class="lato-bold" style="padding-top: 1rem;">Att-satser:</h5>
+                foreach (var att in atts)
+                {
+                    <div id="a-@att.Id">
+                        @{
+                            await Html.RenderPartialAsync("Kommitteer/_Att", att);
+                        }
+                    </div>
+                }
+            }
+            
+            var newAtts = Model.Att
+                .Where(a => !string.IsNullOrWhiteSpace(a.Author))
+                .OrderBy(a => a.AttNumber)
+                .ToList();
+            
+            if (newAtts.Any())
+            {
+                <h5 class="lato-bold" style="padding-top: 1rem;">Yrkanden:</h5>
+                foreach (var att in newAtts)
+                {
+                    <div id="a-@att.Id">
+                        @{
+                            await Html.RenderPartialAsync("Kommitteer/_Att", att);
+                        }
+                    </div>
+                }
+            }
+            
+            if (User.Identity.IsAuthenticated)
+            {
+                await Html.RenderPartialAsync("Admin/Att/_AddAttButton", Tuple.Create(Model.Id, true));
+            }
+        }
+    </div>
+</div>

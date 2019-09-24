@@ -13,16 +13,19 @@
             }
         </div>
     }
+    @foreach (var p in Model.Programs.OrderBy(p => p.ProgramNumber))
+    {
+        <div class="col-lg-4 col-md-6 col-sm-12" id="p-@p.Id">
+            @{
+                await Html.RenderPartialAsync("Partials/_ProgramCard", p);
+            }
+        </div>
+    }
 </div>
 
 
 <script type="text/javascript">
 
-    //
-    // Vars:
-    var buttonSpinner = "<span class='spinner-border spinner-border-sm'></span>";
-    var editing = false;
-    
     // 
     // Functions:
     function loadCommittee(button, committeeId) {
@@ -37,6 +40,7 @@
             contentType: 'application/json; charset=utf-8"',
             success: function (result) {
                 if (result) {
+                    editing = false;
                     $("#c-" + committeeId).html(result);
                 } else {
                     $(button).html(oldButtonHtml);
@@ -64,7 +68,6 @@
                 return;
             }
             
-            editing = true;
             
             var oldButtonHtml = $(button).html();
             $(button).html(buttonSpinner);
@@ -79,6 +82,7 @@
                 contentType: 'application/json; charset=utf-8"',
                 success: function (result) {
                     if (result) {
+                        editing = true;
                         $("#c-" + committeeId).html(result);
                     } else {
                         $(button).html(oldButtonHtml);
