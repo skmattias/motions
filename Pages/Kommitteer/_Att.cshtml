@@ -1,23 +1,59 @@
 @model CsAspnet.Models.dbcontext.Att
 @{
     // The color indicates whether PS agrees.
-    string color = "";
-    string suggestion = "";
+    string csColor = "";
+    string mainColor = "";
+    string csSuggestion = "";
+    string mainProposal = "";
+    string suggestionText = "";
+    string bifall = "bifall", avslag = "avslag", instam = " instämma i intentionerna";
     switch (Model.SuggestedVote)
     {
         case "BIFALL":
-            suggestion += "Centerstudenter föreslår bifall";
-            color = "text-success";
+            csSuggestion += bifall;
+            csColor = "text-success";
             break;
         case "AVSLAG":
-            suggestion += "Centerstudenter föreslår avslag";
-            color = "text-danger";
+            csSuggestion += avslag;
+            csColor = "text-danger";
             break;
         case "INSTAM":
-            suggestion += "Centerstudenter föreslår att instämma i motionens intentioner";
+            csSuggestion += instam;
             break;
     }
+    if (!string.IsNullOrWhiteSpace(csSuggestion))
+    {
+        if (csSuggestion == instam)
+        {
+            suggestionText = "Centerstudenter föreslår att instämma i motionens intentioner";
+        }
+        suggestionText = "Centerstudenter föreslår " + csSuggestion;
+    }
 
+    switch (Model.MainProposal)
+    {
+        case "BIFALL":
+            mainProposal += bifall;
+            mainColor = "text-success";
+            break;
+        case "AVSLAG":
+            mainProposal += avslag;
+            mainColor = "text-danger";
+            break;
+        case "INSTAM":
+            mainProposal += instam;
+            break;
+    }
+    if (!string.IsNullOrWhiteSpace(csSuggestion))
+    {
+        csSuggestion = "CS förslag: " + csSuggestion;
+    }
+    if (!string.IsNullOrWhiteSpace(mainProposal))
+    {
+        mainProposal = "Huvudförslag: " + mainProposal;
+    }
+    
+    
     string md1 = "", md2 = "";
     if (!User.Identity.IsAuthenticated)
     {
@@ -44,12 +80,20 @@
                     </button>
                 }
 
-                <p class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
                    style="display: inline-block; width: 70px;">
                     PS
                 </p> <text>Att:</text>
             </dt>
-            <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>
+            <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">
+                @Model.AttText
+                <p class="lato-light text-right" style="margin-bottom: 0;">
+                    <text class="@csColor">@csSuggestion</text>
+                </p>
+                <p class="lato-light text-right">
+                    <text class="@mainColor">@mainProposal</text>
+                </p>
+            </dd>
         </dl>
     }
     else if (!string.IsNullOrWhiteSpace(Model.Author))
@@ -70,7 +114,7 @@
                     </button>
                 }
 
-                <p class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
                    style="display: inline-block; margin-bottom: 0;">
                     @Model.Author
                 </p>
@@ -80,7 +124,15 @@
             <dt class="col-2 lato-bold">
                 <text>Att:</text>
             </dt>
-            <dd class="col-10">@Model.AttText</dd>
+            <dd class="col-10">
+                @Model.AttText
+                <p class="lato-light text-right" style="margin-bottom: 0;">
+                    <text class="@csColor">@csSuggestion</text>
+                </p>
+                <p class="lato-light text-right">
+                    <text class="@mainColor">@mainProposal</text>
+                </p>
+            </dd>
         </dl>
     }
     else
@@ -101,12 +153,20 @@
                     </button>
                 }
 
-                <p class="@color" data-toggle="tooltip" data-placement="top" title="@suggestion"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
                    style="display: inline-block; width: 70px;">
                     @Model.FullNumber()
                 </p> <text>Att:</text>
             </dt>
-            <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">@Model.AttText</dd>
+            <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">
+                @Model.AttText
+                <p class="lato-light text-right" style="margin-bottom: 0;">
+                    <text class="@csColor">@csSuggestion</text>
+                </p>
+                <p class="lato-light text-right">
+                    <text class="@mainColor">@mainProposal</text>
+                </p>
+            </dd>
         </dl>
     }
 }
