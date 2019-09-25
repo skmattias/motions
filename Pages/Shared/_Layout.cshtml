@@ -23,64 +23,71 @@
     @{
         string expand = User.Identity.IsAuthenticated ? "navbar-expand-md" : "navbar-expand-sm";
     }
-    <nav class="navbar @expand navbar-dark shadow" id="navbar">
+    <nav class="navbar @*@expand*@ navbar-expand-xs navbar-dark shadow" id="navbar">
         <div class="container">
-            <a class="navbar-brand p-3 d-none d-sm-block" asp-page="/Index">
-                        <img src="~/images/logo.png" style="height: 100px; width: auto;">
-                    </a>
-                    <a class="navbar-brand p-3 d-sm-none" asp-page="/Index">
-                        <img src="~/images/small-logo.png" style="height: 100px; width: auto;">
-                    </a>
+            <a class="navbar-brand p-3 d-none d-lg-block" asp-page="/Index">
+                <img src="~/images/logo.png" style="height: 100px; width: auto;">
+            </a>
+            <a class="navbar-brand p-3 d-lg-none" asp-page="/Index">
+                <img src="~/images/small-logo.png" style="height: 100px; width: auto;">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                        <ul class="navbar-nav nav">
-                            <li class="nav-item dropdown">
-                                <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                    Kommittéer
+            <div class="p-3 d-none d-sm-block">
+                <img src="~/images/nypol.png" style="height: 100px; width: auto;"/>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav nav">
+                    <li class="nav-item dropdown">
+                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            Kommittéer
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
+                            @foreach (var c in DatabaseContext.Committee.OrderBy(c => c.CommitteeNumber).ToList())
+                            {
+                                <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber"
+                                   style="white-space: normal">
+                                    <b class="lato-bold">@c.CommitteeNumber</b>: @c.CommitteeName
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
-                                    @foreach (var c in DatabaseContext.Committee.OrderBy(c => c.CommitteeNumber).ToList())
-                                    {
-                                        <a class="dropdown-item" asp-page="/Kommitteer/Index" asp-route-id="@c.CommitteeNumber"
-                                           style="white-space: normal">
-                                            <b class="lato-bold">@c.CommitteeNumber</b>: @c.CommitteeName
-                                        </a>
-                                    }
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                    Program
+                            }
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            Program
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
+                            @foreach (var p in DatabaseContext.Program.OrderBy(p => p.ProgramNumber).ToList())
+                            {
+                                <a class="dropdown-item" asp-page="/Program/Index" asp-route-id="@p.ProgramNumber"
+                                   style="white-space: normal">
+                                    <b class="lato-bold">@p.ProgramNumber</b>: @p.ProgramTitle
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right" style="z-index: 2000;">
-                                    @foreach (var p in DatabaseContext.Program.OrderBy(p => p.ProgramNumber).ToList())
-                                    {
-                                        <a class="dropdown-item" asp-page="/Program/Index" asp-route-id="@p.ProgramNumber"
-                                           style="white-space: normal">
-                                            <b class="lato-bold">@p.ProgramNumber</b>: @p.ProgramTitle
-                                        </a>
-                                    }
-                                </div>
-                            </li>
-                        </ul>
-            
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <ul class="nav navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="" data-toggle="modal" data-target="#copyPasteModal">Kopieringsverktyg</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Logout">Logga ut</a>
-                                </li>
-                            </ul>
-                        }
-                    </div>
+                            }
+                        </div>
+                    </li>
+                </ul>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="nav navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="" data-toggle="modal" data-target="#copyPasteModal">Kopieringsverktyg</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logga ut</a>
+                        </li>
+                    </ul>
+                }
+                
+            </div>
+
         </div>
-        
+
     </nav>
 
     <div class="container body-content">
@@ -123,7 +130,7 @@
                 </div>
             </div>
         </div>
-        
+
     </footer>
 </div>
 
