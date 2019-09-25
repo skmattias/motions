@@ -2,57 +2,46 @@
 @{
     // The color indicates whether PS agrees.
     string csColor = "";
+    string csIcon = "";
+    string csText = "";
     string mainColor = "";
-    string csSuggestion = "";
-    string mainProposal = "";
-    string suggestionText = "";
-    string bifall = "bifall", avslag = "avslag", instam = " instämma i intentionerna";
+    string mainIcon = "";
+    string mainText = "";
     switch (Model.SuggestedVote)
     {
         case "BIFALL":
-            csSuggestion += bifall;
             csColor = "text-success";
+            csIcon = "done";
+            csText = "Centerstudenter föreslår bifall";
             break;
         case "AVSLAG":
-            csSuggestion += avslag;
             csColor = "text-danger";
+            csIcon = "clear";
+            csText = "Centerstudenter föreslår avslag";
             break;
         case "INSTAM":
-            csSuggestion += instam;
+            csIcon = "remove";
+            csText = "Centerstudenter föreslår att instämma i motionens intentioner";
             break;
-    }
-    if (!string.IsNullOrWhiteSpace(csSuggestion))
-    {
-        if (csSuggestion == instam)
-        {
-            suggestionText = "Centerstudenter föreslår att instämma i motionens intentioner";
-        }
-        suggestionText = "Centerstudenter föreslår " + csSuggestion;
     }
 
     switch (Model.MainProposal)
     {
         case "BIFALL":
-            mainProposal += bifall;
             mainColor = "text-success";
+            mainIcon = "done";
+            mainText = "Huvudförslaget är bifall";
             break;
         case "AVSLAG":
-            mainProposal += avslag;
             mainColor = "text-danger";
+            mainIcon = "clear";
+            mainText = "Huvudförslaget är avslag";
             break;
         case "INSTAM":
-            mainProposal += instam;
+            mainIcon = "remove";
+            mainText = "Huvudförslaget är att instämma i motionens intentioner";
             break;
     }
-    if (!string.IsNullOrWhiteSpace(csSuggestion))
-    {
-        csSuggestion = "CS förslag: " + csSuggestion;
-    }
-    if (!string.IsNullOrWhiteSpace(mainProposal))
-    {
-        mainProposal = "Huvudförslag: " + mainProposal;
-    }
-    
     
     string md1 = "", md2 = "";
     if (!User.Identity.IsAuthenticated)
@@ -82,18 +71,26 @@
                     </button>
                 }
 
-                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText"
                    style="display: inline-block; width: 70px;">
                     PS
                 </p> <text>Att:</text>
             </dt>
             <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">
                 @Model.AttText
-                <p class="lato-light text-right" style="margin-bottom: 0;">
-                    <text class="@csColor">@csSuggestion</text>
-                </p>
-                <p class="lato-light text-right">
-                    <text class="@mainColor">@mainProposal</text>
+                <p class="lato-light text-left" style="margin-bottom: 0;">
+                    @if (csText != "")
+                    {
+                        <b class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText">
+                            CS: <i class="mdi mdi-@csIcon suggestion-icon"></i> &nbsp;
+                        </b>
+                    }
+                    @if (mainText != "")
+                    {
+                        <b class="@mainColor" data-toggle="tooltip" data-placement="top" title="@mainText">
+                            Huvudförslag: <i class="mdi mdi-@mainIcon suggestion-icon"></i>
+                        </b>
+                    }
                 </p>
             </dd>
         </dl>
@@ -116,7 +113,7 @@
                     </button>
                 }
 
-                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText"
                    style="display: inline-block; margin-bottom: 0;">
                     @Model.Author
                 </p>
@@ -128,11 +125,19 @@
             </dt>
             <dd class="col-10">
                 @Model.AttText
-                <p class="lato-light text-right" style="margin-bottom: 0;">
-                    <text class="@csColor">@csSuggestion</text>
-                </p>
-                <p class="lato-light text-right">
-                    <text class="@mainColor">@mainProposal</text>
+                <p class="lato-light text-left" style="margin-bottom: 0;">
+                    @if (csText != "")
+                    {
+                        <b class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText">
+                            CS: <i class="mdi mdi-@csIcon suggestion-icon"></i> &nbsp;
+                        </b>
+                    }
+                    @if (mainText != "")
+                    {
+                        <b class="@mainColor" data-toggle="tooltip" data-placement="top" title="@mainText">
+                            Huvudförslag: <i class="mdi mdi-@mainIcon suggestion-icon"></i>
+                        </b>
+                    }
                 </p>
             </dd>
         </dl>
@@ -155,18 +160,26 @@
                     </button>
                 }
 
-                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@suggestionText"
+                <p class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText"
                    style="display: inline-block; width: 70px;">
                     @Model.FullNumber()
                 </p> <text>Att:</text>
             </dt>
             <dd class="col-xs-6 col-sm-8 @md2 col-lg-9">
                 @Model.AttText
-                <p class="lato-light text-right" style="margin-bottom: 0;">
-                    <text class="@csColor">@csSuggestion</text>
-                </p>
-                <p class="lato-light text-right">
-                    <text class="@mainColor">@mainProposal</text>
+                <p class="lato-light text-left" style="margin-bottom: 0;">
+                    @if (csText != "")
+                    {
+                        <b class="@csColor" data-toggle="tooltip" data-placement="top" title="@csText">
+                            CS: <i class="mdi mdi-@csIcon suggestion-icon"></i> &nbsp;
+                        </b>
+                    }
+                    @if (mainText != "")
+                    {
+                        <b class="@mainColor" data-toggle="tooltip" data-placement="top" title="@mainText">
+                            Huvudförslag: <i class="mdi mdi-@mainIcon suggestion-icon"></i>
+                        </b>
+                    }
                 </p>
             </dd>
         </dl>

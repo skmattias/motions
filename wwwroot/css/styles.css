@@ -84,3 +84,8 @@ footer {
     /* The primary green color, but 20% opacity */
     background-color: rgba(0, 126, 55, 0.2);
 }
+
+.suggestion-icon {
+    font-size: 18px;
+    vertical-align: -15%;
+}
