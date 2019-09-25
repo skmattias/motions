@@ -53,14 +53,23 @@
 }
 
 @{
+    // Att-satser.
     var atts = motion.Att
         .Where(a => string.IsNullOrWhiteSpace(a.Author) && !a.IsPsAtt())
         .OrderBy(a => a.AttNumber)
         .ToList();
     
+    // Yrkanden.
+    var newAtts = motion.Att
+        .Where(a => !string.IsNullOrWhiteSpace(a.Author) && !a.IsPsAtt())
+        .ToList();
+    
     if (atts.Any())
     {
-        <h5 class="lato-bold" style="padding-top: 1rem;">Att-satser:</h5>
+        if (newAtts.Any())
+        {
+            <h5 class="lato-bold" style="padding-top: 1rem;">Att-satser:</h5>
+        }
         foreach (var att in atts)
         {
             <div id="a-@att.Id">
@@ -70,10 +79,6 @@
             </div>
         }
     }
-
-    var newAtts = motion.Att
-        .Where(a => !string.IsNullOrWhiteSpace(a.Author) && !a.IsPsAtt())
-        .ToList();
 
     if (newAtts.Any())
     {
