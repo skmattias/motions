@@ -32,9 +32,6 @@
 
 <body data-spy="scroll" data-target="#motions" style="position: relative" class="lato-regular">
 <div class="main-container" id="mainContainer">
-    @{
-        string expand = User.Identity.IsAuthenticated ? "navbar-expand-md" : "navbar-expand-sm";
-    }
     <nav class="navbar @*@expand*@ navbar-expand-xs navbar-dark shadow" id="navbar">
         <div class="container">
             <a class="navbar-brand p-3 d-none d-lg-block" asp-page="/Index">
