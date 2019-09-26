@@ -20,6 +20,7 @@ namespace CsAspnet.Models.dbcontext
         public virtual DbSet<Motion> Motion { get; set; }
         public virtual DbSet<Program> Program { get; set; }
         public virtual DbSet<Section> Section { get; set; }
+        public virtual DbSet<SiteLoad> SiteLoad { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -195,6 +196,17 @@ namespace CsAspnet.Models.dbcontext
                     .WithMany(p => p.Section)
                     .HasForeignKey(d => d.ProgramId)
                     .HasConstraintName("section_program_id_fk");
+            });
+
+            modelBuilder.Entity<SiteLoad>(entity =>
+            {
+                entity.ToTable("site_load", "motions");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.TimeStamp).HasColumnName("time_stamp");
             });
         }
     }

@@ -29,6 +29,12 @@ namespace CsAspnet.Pages.Kommitteer
 
             if (Committee == null)
                 return NotFound();
+
+            await _context.SiteLoad.AddAsync(new SiteLoad
+            {
+                TimeStamp = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
             
             return Page();
         }
