@@ -79,7 +79,7 @@
             </div>
             <div class="modal-body">
                 <ul class="list-group modal-list-group">
-                    @foreach (var motion in Model.Motion)
+                    @foreach (var motion in Model.Motion.OrderBy(m => m.MotionNumber))
                     {
                         <a href="#m-@motion.Id" class="list-group-item text-break" 
                            onclick="$('#allMotionsModal').modal('hide');" id="motionTitleMobile-@motion.Id">
